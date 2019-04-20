@@ -1,0 +1,9 @@
+.git/
+demo-dashboard/k8s/
+detector/data/corpus/
+detector/data/tweets/
+documents/
+streaming/credentials.py
+streaming/startStreamingCluster.py
+trash/
+utils/

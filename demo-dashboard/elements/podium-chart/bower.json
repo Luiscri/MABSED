@@ -1,0 +1,22 @@
+{
+  "name": "podium-chart",
+  "authors": [
+    "Luis Lopez",
+    "gsi"
+  ],
+  "version":"1.0.0",
+  "description": "This web component displays text field information from elasticsearch and represents it on a podium according to a given parameter",
+  "main": "podium-chart.html",
+  "keywords": [
+    "tweets",
+    "text",
+    "podium",
+    "polymer",
+    "webcomponents"
+  ],
+  "dependencies": {
+    "polymer": "polymer#*"
+  },
+  "license": "MIT",
+  "homepage": "https://lab.cluster.gsi.dit.upm.es/sefarad/tweet-chart"
+}

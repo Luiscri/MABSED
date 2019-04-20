@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+        <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+        <link rel="import" href="/bower_components/polymer/polymer.html">
+        <link rel="import" href="/bower_components/elastic-client/elastic-client.html">
+        <link rel="import" href="/bower_components/demo-dashboard/demo-dashboard.html">
+
+        <style>
+            .info-box-icon.number-chart iron-icon.number-chart {
+                top: 26%;
+            }
+
+            body{
+                margin: 0px;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-size: 14px;
+                line-height: 1.42857;
+                color: rgb(51, 51, 51);
+                background-color: rgb(255, 255, 255);
+            }
+        </style>
+        <title>MABSED | Sefarad</title>
+    </head>
+  
+    <body>
+        <template is="dom-bind">
+            <!-- http://sefarad-elasticsearch.cluster.gsi.dit.upm.es -->
+            <elastic-client 
+                config='{"host": "http://localhost:9200/"}' 
+                client="{{client}}"
+                cluster-status="{{myStatus}}">
+            </elastic-client>
+
+            <demo-dashboard
+                client="{{client}}">        
+            </demo-dashboard>
+
+            <script>
+                var datas =[
+                    {
+                        "hits": {
+                            "total": 20000
+                        },
+                        "aggregations": {
+                            "category": {
+                                "buckets": [
+                                    {"key": "myObject", "doc_count": 3000},
+                                    {"key": "otherObject", "doc_count": 1000}
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "hits": {
+                            "total": 30000
+                        },
+                        "aggregations": {
+                            "category": {
+                                "buckets": [
+                                    {"key": "myObject", "doc_count": 1000},
+                                    {"key": "otherObject", "doc_count": 4000}
+                                ]
+                            }
+                        }
+                    }
+                ];
+            </script>
+        </template>
+    </body>
+</html>

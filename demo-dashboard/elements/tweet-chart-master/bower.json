@@ -1,0 +1,23 @@
+{
+  "name": "tweet-chart",
+  "authors": [
+    "gsi-upm"
+  ],
+  "version":"1.0.1",
+  "description": "This web component displays text field information from elasticsearch",
+  "main": "tweet-chart.html",
+  "keywords": [
+    "tweets",
+    "text",
+    "sentiment",
+    "polymer",
+    "webcomponents"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0"
+  },
+  "license": "MIT",
+  "homepage": "https://lab.cluster.gsi.dit.upm.es/sefarad/tweet-chart"
+}

@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  sefarad:
+    build: .
+    ports:
+     - "8080:8080"
+    volumes:
+     - .:/usr/src/app
+    networks:
+      - sefarad-network
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/nodes:/usr/share/elasticsearch/data/nodes
+      - ./elasticsearch/config:/usr/share/elasticsearch/config
+    networks:
+      - sefarad-network
+ 
+networks:
+  sefarad-network:
+    driver: bridge

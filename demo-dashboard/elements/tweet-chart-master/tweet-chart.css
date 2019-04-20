@@ -1,0 +1,65 @@
+:host {
+  margin: 0;
+  padding: 0;
+  width: 400px;
+  height: 300px;
+}
+
+.top-bar{
+  width: 100%; 
+  background-color: #063b65; 
+  border-radius: 5px 5px 0 0; 
+  color: white; 
+  text-align: center; 
+  height: 35px; 
+  line-height: 35px;
+}
+
+.top-bar span {
+  vertical-align: middle;
+}
+
+paper-icon-button.green {
+  color: var(--paper-green-500);
+}
+
+paper-icon-button.green:hover {
+  background: var(--paper-green-50);
+  border-radius: 50%;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tweet {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.tweet-text {
+  font-size:13px; 
+  display:inline-block; 
+  vertical-align: middle; 
+  color: black;
+}
+
+.bg-gold {
+  background-color: rgba(242,215,50,1) !important;
+}
+
+.bg-silver {
+  background-color: rgba(160,160,160,1) !important;
+}
+
+.bg-bronze {
+  background-color: rgba(223,182,103,1) !important;
+}
+
+.text {
+  font-size: 17px;
+  font-weight: bold;
+}

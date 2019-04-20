@@ -1,0 +1,21 @@
+{
+  "name": "material-search",
+  "homepage": "https://lab.cluster.gsi.dit.upm.es/sefarad/material-search",
+  "authors": [
+    "gsi-upm"
+  ],
+  "description": "Searchbox with material design style",
+  "main": "material-search.html",
+  "keywords": [
+    "search",
+    "polymer",
+    "web-component"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0"
+  },
+  "license": "MIT"
+}

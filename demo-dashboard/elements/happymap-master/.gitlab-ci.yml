@@ -1,0 +1,28 @@
+variables:
+  WEB_IMAGE: $CI_REGISTRY_IMAGE
+
+before_script:
+  - make -e login
+
+stages:
+  - build
+  - push
+  - deploy
+
+build-web:
+  stage: build
+  script:
+    - make -e build-web
+
+push-web:
+  stage: push
+  script:
+    - make -e push-web
+
+deploy:
+  stage: deploy
+  environment: test
+  script:
+    - make -e deploy
+  only:
+    - master

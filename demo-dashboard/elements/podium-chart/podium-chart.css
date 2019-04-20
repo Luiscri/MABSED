@@ -1,0 +1,119 @@
+@font-face {
+    font-family: DaggerSquare;
+    src: url("fonts/podium-font.woff") format("woff"), url("fonts/podium-font.ttf")  format("truetype");
+}
+
+#podium-box {
+    margin: 0 auto;
+    display: flex;
+}
+
+.step-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+#first-step {
+    height: 50%;
+}
+
+#second-step {
+    height: 35%;
+}
+
+#third-step {
+    height: 30%;
+}
+
+.trophy {
+    margin-top: auto;
+    text-align: center;
+    height: 50%;
+    width: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+}
+
+#trophy-gold {
+    background-image: url("img/trophy-gold.svg");
+}
+
+#trophy-silver {
+    background-image: url("img/trophy-silver.svg");
+}
+
+#trophy-bronze {
+    background-image: url("img/trophy-bronze.svg");
+}
+
+.engraving {
+    margin: 0 auto;
+    margin-top: 25px;
+    font-weight: bold;
+    width: 100px;
+}
+
+.engraving p {
+    margin: 0;
+}
+
+.bg-navy {
+    background-color: #063b65;
+}
+
+.podium-number {
+    font-family: DaggerSquare;
+    font-weight: bold;
+    font-size: 4em;
+    color: white;
+}
+
+.modal-header {
+    height: 80px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 5px 5px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.modal-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.body-content {
+    font-size: 18px;
+}
+
+.title-border {
+    border-left: 3px #063b65 solid;
+}
+
+.flexer-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.my-button {
+    background-color: #063b65;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.centerBoth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

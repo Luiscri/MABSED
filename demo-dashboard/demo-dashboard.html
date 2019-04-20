@@ -1,0 +1,300 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-material/paper-material.html">
+<link rel="import" href="/elements/happymap-master/happymap-element.html">
+<link rel="import" href="/elements/material-search/material-search.html">
+<link rel="import" href="/elements/tweet-chart-master/tweet-chart.html">
+<link rel="import" href="/elements/number-chart-master/number-chart.html">
+<link rel="import" href="/elements/podium-chart/podium-chart.html">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<dom-module id="demo-dashboard">
+    <link rel="import" type="css" href="demo-dashboard.css">
+    <link rel="import" href="/styles/app-theme.html" type="css">
+    <link rel="import" href="/styles/main.css" type="css">
+
+    <template>
+        <iron-ajax auto
+            url="queries.json"
+            handle-as="json"
+            last-response="{{queries}}">   
+        </iron-ajax>
+
+        <div class="my-5" style="display: flex;flex-direction: row;justify-content: center;align-content: center;width: 100%;">
+            <div class="top">
+                <img src="img/MABSEDlogoAzul.png" style="object-fit: cover;">
+            </div>
+
+        </div>
+  
+        <div class="container my-5">
+            <material-search active=True search-value="{{query}}"></material-search>
+
+            <div class="row my-5">
+                <div class="col-md-12">
+                    <podium-chart
+                        data="{{eventsData}}"
+                        height="400"
+                        stylebg="bg-navy"
+                        nwords="3">
+                    </podium-chart>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <number-chart 
+                        data="{{tweetsData}}"
+                        filters="{{filters}}"
+                        aggkey="eventId"
+                        title="Event #2 number of tweets"
+                        icon="img/second.svg"
+                        subtitle="Total"
+                        stylebg="bg-silver"
+                        object="2">
+                    </number-chart>
+                    <tweet-chart
+                      datos="{{tweetsData}}"
+                      title="Event #2 list of tweets"
+                      filters="{{filters}}"
+                      object="2"   
+                      icon="icons:list">
+                    </tweet-chart>
+                </div>
+                <div class="col-md-4">
+                    <number-chart 
+                        data="{{tweetsData}}"
+                        filters="{{filters}}"
+                        aggkey="eventId"
+                        title="Event #1 number of tweets"
+                        icon="img/first.svg"
+                        subtitle="Total"
+                        stylebg="bg-gold"
+                        object="1">
+                    </number-chart>
+                    <tweet-chart
+                      datos="{{tweetsData}}"
+                      title="Event #1 list of tweets"
+                      object="1"
+                      icon="icons:list">
+                    </tweet-chart>
+                </div>
+                <div class="col-md-4">
+                    <number-chart 
+                        data="{{tweetsData}}"
+                        filters="{{filters}}"
+                        aggkey="eventId"
+                        title="Event #3 number of tweets"
+                        icon="img/third.svg"
+                        subtitle="Total"
+                        stylebg="bg-bronze"
+                        object="3">
+                    </number-chart>
+                    <tweet-chart
+                      datos="{{tweetsData}}"
+                      title="Event #3 list of tweets"
+                      object="3" 
+                      icon="icons:list">
+                    </tweet-chart>
+                </div>
+            </div>
+            
+            <div class="row centerBoth">
+                <div class="col-md-6 mt-5">
+                    <div class="top_bar_happy_map">
+                        <iron-icon icon="maps:place" class="style-scope dashboard-somedi x-scope iron-icon-1">
+                        </iron-icon>
+                        <span class="style-scope google-chart">Geolocation of the events</span>
+                    </div>
+
+                    <!-- visualize data in case of connection error -->
+                    <happymap-element
+                        selected="[[getPlaces(tweetsData)]]">    
+                    </happymap-element>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <img class="gsi_logo" src="img/gsi_blanco.svg">
+        </div>
+    </template>
+
+    <script>
+        var ready = false;
+        Polymer({
+            is: 'demo-dashboard',
+            properties: {
+                selected: {
+                  type: Number,
+                  value: 0
+                }, 
+
+                tweetsData: {
+                  type: Object
+                },
+
+                eventsData: {
+                    type: Object
+                },
+
+                query: {
+                    type: String,
+                },
+
+                client: {
+                  type: Object,
+                  notify: true,
+                  observer: '_clientChanged'              
+                },
+
+                fields: {
+                  type: Array,
+                  value: function() { return []; }
+                },
+
+                filters: {
+                  type: Array,
+                  notify: true,
+                  value: function() { return []; }
+                }
+            },
+        
+            observers: [
+              '_filtersChange(filters.*)'
+            ],
+
+            behaviors: [
+                Polymer.IronA11yKeysBehavior
+            ],
+
+            keyBindings: {
+                'enter': '_search'
+            },
+
+            ready: function(){
+                console.log("Ready");
+            },
+
+            getPlaces: function(data){
+                var places = []
+                data.hits.hits.forEach(function(entry){
+                    if('lat' in entry._source){
+                        places.push({'lat': entry._source.lat, 'lon': entry._source.long, 'text': entry._source.text});
+                    }
+                });
+                return places;
+            },
+
+            _clientChanged: function() {
+                console.log("ClientChanged");
+                ready = true;
+                this._query();
+            },
+
+            _filtersChange: function() {
+                this._query();
+            },
+
+            _search: function(){
+                //console.log("search fired")
+                //console.log(this.query.length)
+                if (this.query.length == 0){
+                  //console.log("default search fired")
+                  this.filters = [];
+                  this._query()
+                }
+                else {
+                  this.push('filters', {terms: {'text': [this.query]}});
+                  this._query()
+                }
+            },
+
+            _query: function() {
+                console.log("_filtersChangedash")
+                var that = this;
+                console.log("Ready?: ", ready);
+                if(ready){
+                    this.client.search({
+                        // undocumented params are appended to the query string
+                        index: "tweets",
+                        type: "tweet",
+                        body: {
+                            size: 1000,
+                            query: {
+                                bool: {
+                                    must: this.filters,
+                                }
+                            },
+                            aggs: {
+                                eventId: {
+                                    terms: {
+                                        field: "eventId",
+                                        order: {
+                                            _count: "desc"
+                                        }
+                                    }
+                                },
+
+                                lat: {
+                                    terms: {
+                                        field: "lat",
+                                        order: {
+                                        _count: "desc"
+                                        }
+                                    }
+                                },
+
+                                long: {
+                                    terms: {
+                                        field: "long",
+                                        order: {
+                                        _count: "desc"
+                                        }
+                                    }
+                                }
+                            }      
+                        }
+                    }).then(function(resp) {
+                        that.tweetsData = resp;
+                        console.log("Tweets uploaded");
+                    });
+
+                    this.client.search({
+                        // undocumented params are appended to the query string
+                        index: "events",
+                        type: "event",
+                        body: {
+                            size: 10,
+                            query: {
+                                bool: {
+                                    must: this.filters,
+                                }
+                            },
+                            aggs: {
+                                eventId: {
+                                    terms: {
+                                        field: "_id",
+                                        order: {
+                                            _count: "desc"
+                                        }
+                                    }
+                                }
+                            }      
+                        }
+                    }).then(function(resp) {
+                        that.eventsData = resp;
+                        console.log("Events uploaded")
+                    });
+                }
+            }
+        });
+    </script>
+</dom-module>

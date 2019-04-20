@@ -1,0 +1,157 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="tweet-chart">
+
+<style is="custom-style">
+  @import url("../../styles/app-theme.html");
+</style>
+
+<link rel="import" type="css" href="tweet-chart.css">
+
+  <template>
+
+    <!-- Shadow DOM -->
+    <paper-material elevation="1">
+      <div class="top-bar">
+        <iron-icon icon="{{icon}}"></iron-icon>
+        <span>{{title}}</span>
+      </div>
+      <div style="height: 600px; overflow-x: hidden; overflow-y: auto;">
+        <template is="dom-repeat" items="{{data}}" as="tweet"> 
+          <div class$="{{checkEvent(tweet.eventId)}} tweet">
+            <div class="row" style="height: 100%;">
+              <a href={{getUrl(tweet.tweetId)}} target="_blank">
+                <div class="col-md-3 center-container pr-0" style="height: 100%;">
+                  <img src="/img/twitter.svg" style="width: 80px; display:block; position: relative;max-height: 100%;">
+                </div>
+                <div class="col-md-9 center-container" title="{{tweet.text}}" data-toggle="tooltip" data-placement="left" style="height: 100%;overflow: hidden;">
+                  <span class="tweet-text">{{tweet.text}}</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div style="width:100%; clear: both"></div>
+    </paper-material>
+
+  </template>
+
+  <script>
+    var filtered = false;
+
+    Polymer({
+
+      is: 'tweet-chart',
+
+      properties: {
+
+        data: {
+            type: Array,
+            value: [] //default value for data array.
+        },
+
+        icon: {
+          type: String,
+          value: "face"
+        },
+        source:{
+          type:String,
+        },
+        title: {
+          type: String,
+          value: "List of different tweets"
+        },
+
+        brand: {
+          type: String,
+          value: "Undefined"
+        },
+
+        query: {
+          type: String,
+          observer: '_queryChanged'
+        },
+
+        object: {
+          type: String
+        },
+
+        index: {
+          type: String
+        },
+
+        subindex: {
+          type: String
+        },
+
+        fields: {
+          type: Array,
+          value: function() { return []; }
+        },
+
+        datos:{
+          type: Object,
+          observer: '_dataChanged'
+        },
+
+        field: {
+          type: String
+        },
+
+        host: {
+          type: String
+        },
+
+        param: {
+          type: String,
+          notify: true
+        },
+
+        filters: {
+          type: Array,
+          notify: true,
+          value: function() { return []; }
+        }
+      },
+
+      ready: function() {   
+
+      },
+
+      _dataChanged: function() {
+        var that = this
+        var hits = this.datos.hits.hits;
+        var object = this.object
+        var results = []
+        if (object != undefined){
+          hits.forEach(function(entry) {
+            if(entry._source.eventId == object){
+              results.push(entry._source);
+            }
+          });
+        }
+        that.data = results
+      },
+
+      checkEvent: function(eventId) {
+        if (eventId == "1")
+          return "bg-gold"
+        else if (eventId == "2")
+          return "bg-silver"
+        else 
+          return "bg-bronze"
+      },
+
+      getUrl: function(tweetId) {
+        let url = "https://twitter.com/user/status/" + tweetId
+        return url
+      }
+    });
+
+      
+  </script>
+
+</dom-module>

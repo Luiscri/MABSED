@@ -1,0 +1,25 @@
+{
+  "name": "number-chart",
+  "authors": [
+    "gsi-upm"
+  ],
+  "version": "1.1.1",
+  "description": "This Web component retrieves index or doc-type size from elasticsearch",
+  "main": "number-chart.html",
+  "keywords": [
+    "elasticsearch",
+    "size",
+    "polymer",
+    "web-components"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0"
+  },
+  "devDependencies": {
+    "number-chart": "./"
+  },
+  "license": "MIT",
+  "homepage": "https://lab.cluster.gsi.dit.upm.es/sefarad/number-chart"
+}

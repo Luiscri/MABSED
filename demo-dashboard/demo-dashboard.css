@@ -1,0 +1,227 @@
+:root {
+      --paper-tab-ink: var(--accent-color);
+
+      --paper-tabs-selection-bar-color: var(--accent-color);
+    } 
+
+    paper-material{
+      background: white;
+    }
+
+    google-chart {
+      margin: 0 auto;
+    }
+
+    .lists{
+      padding: 0px;
+    }
+
+    .chart_container {
+      width: 49%;
+      margin-bottom: 20px; 
+    }
+
+    /* Tablet+ */
+    @media (min-width: 601px) {
+      paper-tabs, paper-toolbar {
+      }
+    }
+
+    paper-tabs, paper-toolbar {
+      background-color: #3C6E71; 
+      color: #fff;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+      /*border-radius: 5px 5px 0 0;*/
+    }
+
+    paper-tabs[noink][no-bar] paper-tab.iron-selected {
+      color: #04419B;
+    }
+      #content, .announcement {
+        max-width: 790px;
+        background-color: #FFF;
+        padding: 1em;
+        margin: 0 auto;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+      }
+      
+      .announcement {
+        margin: 1em auto;
+        border: 2px solid #0A0;
+      }
+      
+      h2 {
+        font-size: 1.8em;
+        margin: 1.5em 0 0.5em -2px;
+        font-weight: bold;
+        padding: .2em .5em;
+        background: #edeeef;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        color: #fff;
+        background-color: #b0de5c;
+        background-image: -moz-linear-gradient(top, #b0de5c, #82cb00);
+        background-image: -o-linear-gradient(top, #b0de5c, #82cb00);
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#b0de5c), to(#82cb00));
+        background-image: -webkit-linear-gradient(top, #b0de5c, #82cb00);
+        background-image: linear-gradient(top, #b0de5c, #82cb00);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#b0de5c', EndColorStr='#82cb00');
+        border-radius: 5px;
+        text-shadow: 0 -1px 1px rgba(0,0,0,0.35);
+        box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+      }
+      .nav {
+        color: #000;
+        text-decoration: none;
+        border-bottom: 1px dashed #000;
+        display: inline-block;
+        padding: 3px;
+      }
+      .nav:hover {
+        background-color: #DDF;
+      }
+      
+      leaflet-map,
+      geolocation-sample {
+        max-width: 100%;
+        height: 30em;
+        border: 1px solid #aaa;
+      }
+      geolocation-sample {
+        height: 21em;
+      }
+      pre {
+        font-size: large;
+        padding: 0.5em 1em;
+        background-color: #DDD;
+        clear: all;
+      }
+      .i {
+        color: #00D
+      }
+      .a {
+        color: #008;
+      }
+      .v {
+        color: #800;
+      }
+      .c {
+        color: #080;
+      }
+      iron-pages {
+      padding: 0px  62px 10px !important;
+      }
+      #barsentiment > paper-material{
+        height: 261px;
+      }
+
+.top-bar{
+  width: 100%; 
+  background-color: #3C6E71 !important;  
+  color: white; 
+  text-align: center; 
+  height: 35px; 
+  line-height: 35px;
+  border-radius: 5px 5px 0 0;
+}
+.bg-orange.number-chart{
+    background-color: #e78200 !important;
+    color: white;
+  } 
+  .bg-yellow.number-chart {
+    background-color: #9d33ff !important;
+    color: white;
+  }
+  .map {
+    height:4%;
+  }
+  .google-chart-0 .top-bar.google-chart {
+    width: 100%;
+    background-color: #063b65;
+    border-radius: 5px 5px 0 0;
+    color: white;
+    text-align: center;
+    height: 35px;
+    line-height: 35px;
+  }
+  .top_bar_happy_map {
+    width: 100%;
+    background-color: #063b65 ;
+    color: white;
+    text-align: center;
+    height: 35px;
+    line-height: 35px;
+    border-radius: 5px 5px 0 0;
+}
+.navBar {
+    background-color: #063b65;
+    color: #fff;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/*******************************
+            Centrar            *
+ *******************************/
+
+/* FlexBox (se le pone al padre) */
+.centerVertical {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.centerVertical2 {
+    justify-content: center;
+    align-items: center;
+}
+
+.centerHorizontal {
+    margin: 0 auto;
+}
+
+/* Vertical y Horizontalmente */
+.centerBoth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.header{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  background: linear-gradient(#037dd2, #014ea0);
+  width: 100%;
+  height: 35%;
+}
+.top{
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;;
+
+}
+.footer{
+  margin-top: 0.1%;
+  height: 100px;
+  background-color: #e0e6e9;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+  padding: 20px 0;
+
+    
+}
+.gsi_logo{
+  object-fit: contain;
+}
+@media screen and (min-width: 480px) and (max-width: 959px){
+   iron-pages {
+      padding: 0px;
+   }
+}

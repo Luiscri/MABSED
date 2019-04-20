@@ -1,0 +1,51 @@
+{
+  "name": "demo-dashboard",
+  "authors": [
+    "gsi-upm"
+  ],
+  "description": "Dashboard template to start your deployment",
+  "main": "demo-dashboard.html",
+  "keywords": [
+    "dashboard",
+    "web-component",
+    "elasticsearch",
+    "polymer"
+  ],
+  "dependencies": {
+    "paper-tabs": "paper-tabs#1.1.0",
+    "google-apis": "GoogleWebComponents/google-apis#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
+    "polymer": "Polymer/polymer#1.7.0",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.0",
+    "jquery": "jquery#^2.1.4",
+    "elasticsearchjs-import": "DigElements/elasticsearchjs-import#~1.0.0",
+    "elasticjs-import": "DigElements/elasticjs-import#~1.0.1",
+    "elastic-client": "DigElements/elastic-client#~1.0.1",
+    "webcomponentsjs": "< 1.0.0",
+    "comment-chart": "comment-chart#*",
+    "paper-material": "paper-material#*",
+    "paper-dialog":"paper-dialog#1.1.0",
+    "iron-pages": "PolymerElements/iron-pages#1.0.2",
+    "paper-item": "paper-item#1.0.2",
+    "paper-menu": "paper-menu#1.0.1",
+    "iron-a11y-keys-behavior": "iron-a11y-keys-behavior#1.1.9",
+    "iron-collapse": "iron-collapse#1.0.2",
+    "happymap-element":"happymap-element#*",
+    "app-route": "PolymerElements/app-route#1.0.1",
+    "jquery": "^3.2.1",
+    "leaflet": "^1.0.3",
+    "Leaflet.EasyButton": "^2.2.0",
+    "leaflet.markercluster": "^1.0.5",
+    "paper-autocomplete": "paper-autocomplete#2.1.2"
+  },
+  "resolutions": {
+    "webcomponentsjs": "0.7.24",
+    "elastic.js": "^1.2.0",
+    "polymer":"1.7.0",
+    "leaflet": "^1.0.3"
+  },
+
+  "license": "Apache-2.0",
+  "homepage": "https://lab.cluster.gsi.dit.upm.es/sefarad/demo-dashboard"
+}

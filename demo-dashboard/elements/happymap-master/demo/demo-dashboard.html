@@ -1,0 +1,69 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/happymap-element.html">
+<!--<script src="madrid150.js"></script>-->
+
+<dom-module id="demo-dashboard">
+  <template>
+    <happymap-element data="{{data}}"></happymap-element>
+  </template>
+  <script>
+    var ready = false;
+    Polymer({
+      is: 'demo-dashboard',
+      properties: {
+        data: {
+          type: Array,
+        },
+        client: {
+          type: Object,
+          notify: true,
+          observer: '_clientChanged'              
+        }
+
+      },
+
+      _clientChanged: function() {
+        console.log("ClientChanged");
+        ready = true;
+        this._query();
+      },
+
+      _query: function() {
+        console.log("_filtersChangedash")
+        var that = this;
+        
+        console.log("Ready?: ", ready);
+        if(ready){
+          this.client.search({
+          // undocumented params are appended to the query string
+          index: "happymap",
+          type: "tweet",
+          body: {
+            size: 1000,
+            query: {
+              match_all : {}
+            }      
+          }
+          }).then(function (resp) {
+            var datos = []
+            resp.hits.hits.forEach(function(entry){
+              datos.push(entry._source)
+            });
+            that.data = datos
+            
+          });
+        }
+      },
+
+      ready: function(){
+        /*var that = this;
+        console.log(sample_data);
+        that.data = sample_data;
+        this.notifySplices('data', [
+          { index: 1, removed: [], addedCount: that.data.length, object: that.data, type: 'splice'}
+        ]);*/
+        console.log("ready");
+      }
+    });
+  </script>
+</dom-module>

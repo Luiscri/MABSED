@@ -1,0 +1,426 @@
+<!-- jQuery -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Leaflet -->
+<script src="/bower_components/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="/bower_components/leaflet/dist/leaflet.css"/>
+<!-- Leaflet EasyButton-->
+<script src="/bower_components/Leaflet.EasyButton/src/easy-button.js"></script>
+<!-- Leaflet MarkerCluster-->
+<script src="/bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+<link rel="stylesheet" href="/bower_components/leaflet.markercluster/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="/bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+<!-- Heatmap -->
+<script src="dist/simpleheat.js"></script>
+<script src="dist/HeatLayer.js"></script>
+
+<dom-module id="happymap-element">
+  <template>
+    <!-- [[mapMode]] -->
+    <!--BODY-->
+    <!-- <p>Map center: [[mapCenterLat]], [[mapCenterLon]]. Map zoom: [[mapZoom]]</p>
+    <p>Tweet count: [[data.length]] | Selected: [[selected.length]]</p>
+    <p>Test: [[test]]</p> -->
+
+    <!--MAP-->
+    <div id="happymap"></div>
+    <style>
+        #happymap {
+          height: 400px;
+        }
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'happymap-element',
+      properties: {
+        data: {
+          type: Array,
+          notify: true,
+          observer: 'refreshMapPoints'
+        },
+        selected:{
+          type: Array,
+          value:[],
+          notify: true,
+        },
+        map: {
+          type: Object
+        },
+        markerMapLayer: {
+          type: Object
+        },
+        happyMapLayer: {
+          type: Object
+        },
+        intenseMapLayer: {
+          type: Object
+        },
+        powerMapLayer: {
+          type: Object
+        },
+        emojiMapLayer: {
+          type: Object
+        },
+        happyMapOptions: {
+          type: Object
+        },
+        intenseMapOptions: {
+          type: Object
+        },
+        powerMapOptions: {
+          type: Object
+        },
+        infoTag: {
+          type: Object
+        },
+        happyMapLeyend: {
+          type: Object
+        },
+        intenseMapLeyend: {
+          type: Object
+        },
+        powerMapLeyend: {
+          type: Object
+        },
+        mapMode: {
+          type: String
+        },
+        isReady: {
+          type: Boolean,
+          value: false
+        }
+      },
+      observers: [
+        '_selectedChanged(selected.splices)'
+      ],
+      ready: function() {
+        //console.log('LOG happymap-element: happymap ready()');
+        var that = this;
+        // Create Leaflet Map
+        var map = L.map(that.$.happymap).setView([40.416729, -3.703339], 10);
+
+        // Add tiles to Leaflet Map
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Initialize marker and emoji layers. Set the marker-heatmap combination as default
+        that.markerMapLayer = new L.FeatureGroup();
+        that.happyMapOptions = {
+          gradient: {
+            0.5: 'blue',
+            0.75: 'cyan',
+            1: 'lime'
+          },
+          minOpacity: 0.5,
+          max: 1,
+          relative: true
+        };
+        that.intenseMapOptions = {
+          gradient: {
+            1 : '#FCB045',
+            0.9  : '#FC923D',
+            0.8  : '#FC7535',
+            0.7  : '#FC4929',
+            0.6  : '#FD1D1D',
+            0.5  : '#E4223B',
+            0.4  : '#CC2859',
+            0.3  : '#B32E77',
+            0.2  : '#9B3495',
+            0.1  : '#833AB4'
+          },
+          minOpacity: 0.5,
+          max: 1,
+          relative: true
+        };
+        that.powerMapOptions = {
+          gradient: {
+            1 : '#FF070B',
+            0.9  : '#F70432',
+            0.8  : '#F2034C',
+            0.7  : '#EC0266',
+            0.6  : '#E5008D',
+            0.5  : '#A00062',
+            0.4  : '#5B0038',
+            0.3  : '#2D001C',
+            0.2  : '#16000E',
+            0.1  : '#000000'
+          },
+          minOpacity: 0.5,
+          max: 1,
+          relative: true
+        };
+
+        that.mapMode = 'HAPPY_MODE';
+        map.addLayer(that.markerMapLayer);
+
+        // Add map info tag
+        that.infoTag = L.control();
+        that.infoTag.update = function (map_mode) {
+          if(map_mode == 'HAPPY_MODE'){
+            this._div.innerHTML = '<h4>Geolocated</h4>' + 'WorldWide';
+          }
+          /*if(map_mode == 'INTENSE_MODE'){
+            this._div.innerHTML = '<h4>IntenseMap</h4>' + 'WorldWide';
+          }
+          if(map_mode == 'POWER_MODE'){
+            this._div.innerHTML = '<h4>PowerMap</h4>' + 'WorldWide';
+          }*/
+        };
+        that.infoTag.onAdd = function (map) {
+          this._div = L.DomUtil.create('div', 'info');
+          this.update(that.mapMode);
+          return this._div;
+        };
+
+        // Switch layer button
+        /*L.easyButton( '<span id="happy_map_button">Geolocated Map</span>', function(){
+          that.switchMapLayer('HAPPY_MODE');
+        }).addTo(map);*/
+        // Switch layer button
+        /*L.easyButton( '<span id="intense_map_button">Intense Map</span>', function(){
+          that.switchMapLayer('INTENSE_MODE');
+        }).addTo(map);
+        // Switch layer button
+        L.easyButton( '<span id="Power_map_button">Power Map</span>', function(){
+          that.switchMapLayer('POWER_MODE');
+        }).addTo(map);*/
+        // Switch layer button
+
+        // Map leyend
+        function getColor(grade) {
+          if(that.mapMode == 'HAPPY_MODE'){
+            return grade > 1    ? '#00FF00' :
+                   grade > 0.9  ? '#00FF38' :
+                   grade > 0.8  ? '#00FF71' :
+                   grade > 0.7  ? '#00FFA9' :
+                   grade > 0.6  ? '#00FFE2' :
+                   grade > 0.5  ? '#00E2FF' :
+                   grade > 0.4  ? '#00A9FF' :
+                   grade > 0.3  ? '#0071FF' :
+                   grade > 0.2  ? '#0038FF' :
+                   grade > 0.1  ? '#0000FF' :
+                                  '#0000FF' ;
+          }
+          else if(that.mapMode == 'INTENSE_MODE'){
+            return grade > 1 ? '#FCB045' :
+                   grade > 0.9  ? '#FC923D' :
+                   grade > 0.8  ? '#FC7535' :
+                   grade > 0.7  ? '#FC4929' :
+                   grade > 0.6  ? '#FD1D1D' :
+                   grade > 0.5  ? '#E4223B' :
+                   grade > 0.4  ? '#CC2859' :
+                   grade > 0.3  ? '#B32E77' :
+                   grade > 0.2  ? '#9B3495' :
+                   grade > 0.1  ? '#833AB4' :
+                                  '#833AB4' ;
+
+          }
+          else if(that.mapMode == 'POWER_MODE'){
+            return grade > 1 ? '#FF070B' :
+                  grade > 0.9  ? '#F70432' :
+                  grade > 0.8 ? '#F2034C' :
+                  grade > 0.7 ? '#EC0266' :
+                  grade > 0.6 ? '#E5008D' :
+                  grade > 0.5 ? '#A00062' :
+                  grade > 0.4 ? '#5B0038' :
+                  grade > 0.3 ? '#2D001C' :
+                  grade > 0.2 ? '#16000E' :
+                  grade > 0.1 ? '#000000' :
+                                '#000000' ;
+          }
+          else {
+            return;
+          }
+        }
+        var leyendHandler = function(map){
+          var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+            labels = [],
+            from, to;
+          labels.push('<div><span style="float: left; margin-right: 0.2cm;">Less</span>')
+          for (var i = 0; i < grades.length; i++) {
+            from = grades[i];
+            labels.push(
+                '<i style="background:' + getColor(from + 0.1) + '"></i>');
+            }
+          labels.push('<span style="margin-left: 0.2cm;"> More </span></div>')
+          div.innerHTML = labels.join('');
+          return div;
+        };
+        that.happyMapLeyend = L.control({position: 'bottomright'});
+        that.happyMapLeyend.onAdd = leyendHandler;
+        that.intenseMapLeyend = L.control({position: 'bottomright'});
+        that.intenseMapLeyend.onAdd = leyendHandler;
+        that.powerMapLeyend = L.control({position: 'bottomright'});
+        that.powerMapLeyend.onAdd = leyendHandler;
+        var sheets = document.styleSheets;
+        var sheet = document.styleSheets[0];
+        sheet.insertRule(".info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px;}", 1);
+        sheet.insertRule(".info h4 { margin: 0 0 5px; color: #777; }", 1);
+        sheet.insertRule("legend {line-height: 18px; color: #555; }", 1);
+        sheet.insertRule(".legend i { width: 16px; height: 16px; float: left; opacity: 0.7; }", 1);
+        that.infoTag.addTo(map);
+        that.map = map;
+        that.map._onResize(); // Avoid tiles not appearing error
+        that.isReady = true;
+    },
+    switchMapLayer: function(newMapMode) {
+      var that = this;
+      if (!that.isReady) {
+        return;
+      }
+      //console.log('LOG happymap-element: switchMapLayer');
+      if($.inArray(newMapMode, ['HAPPY_MODE', 'INTENSE_MODE', 'POWER_MODE', 'EMOJI_MODE'])>=0){
+        that.mapMode = newMapMode;
+        that.syncMapLayers();
+      }
+      else {
+        //console.log('switchMapLayer: ERR!');
+      }
+    },
+    syncMapLayers: function() {
+      var that = this;
+      if (!that.isReady) {
+        return;
+      }
+      //console.log('LOG happymap-element: syncMapLayers');
+      if(that.mapMode == 'EMOJI_MODE'){
+        that.map.removeLayer(that.markerMapLayer);
+        that.map.removeLayer(that.happyMapLayer);
+        that.map.removeLayer(that.intenseMapLayer);
+        that.map.removeLayer(that.powerMapLayer);
+        that.map.removeControl(that.happyMapLeyend);
+        that.map.removeControl(that.intenseMapLeyend);
+        that.map.removeControl(that.powerMapLeyend);
+
+        that.map.addLayer(that.emojiMapLayer);
+      }
+      else if (that.mapMode == 'HAPPY_MODE') {
+        that.map.removeLayer(that.emojiMapLayer);
+        that.map.removeLayer(that.intenseMapLayer);
+        that.map.removeLayer(that.powerMapLayer);
+        that.map.removeControl(that.intenseMapLeyend);
+        that.map.removeControl(that.powerMapLeyend);
+
+        that.map.addLayer(that.happyMapLayer);
+        that.map.addLayer(that.markerMapLayer);
+        that.happyMapLeyend.addTo(that.map);
+      }
+      else if (that.mapMode == 'INTENSE_MODE') {
+        that.map.removeLayer(that.emojiMapLayer);
+        that.map.removeLayer(that.happyMapLayer);
+        that.map.removeLayer(that.powerMapLayer);
+        that.map.removeControl(that.happyMapLeyend);
+        that.map.removeControl(that.powerMapLeyend);
+
+        that.map.addLayer(that.intenseMapLayer);
+        that.map.addLayer(that.markerMapLayer);
+        that.intenseMapLeyend.addTo(that.map);
+      }
+      else if (that.mapMode == 'POWER_MODE') {
+        that.map.removeLayer(that.emojiMapLayer);
+        that.map.removeLayer(that.happyMapLayer);
+        that.map.removeLayer(that.intenseMapLayer);
+        that.map.removeControl(that.intenseMapLeyend);
+        that.map.removeControl(that.happyMapLeyend);
+
+        that.map.addLayer(that.powerMapLayer);
+        that.map.addLayer(that.markerMapLayer);
+        that.powerMapLeyend.addTo(that.map);
+      }
+      else {
+        //console.log('syncMapLayers: ERR!');
+      }
+      that.infoTag.update(that.mapMode)
+    },
+    _selectedChanged: function(newValue){
+      var that = this;
+      if (!that.isReady || !that.map) {
+        return;
+      }
+      console.log('LOG happymap-element: selectedChanged');
+      that.map.removeLayer(that.markerMapLayer);
+      that.markerMapLayer = new L.FeatureGroup();
+      that.selected.forEach(function(entry) {
+        var marker = L.marker([entry.lat, entry.lon]);
+        marker.bindPopup(that._getMarkerInfo(entry));
+        marker.addTo(that.markerMapLayer);
+        }
+      );
+      that.map.addLayer(that.markerMapLayer);
+    },
+    _getMarkerInfo: function(entry){
+      var that = this;
+      if (!that.isReady) {
+        return;
+      }
+      //console.log('LOG happymap-element: getMarkerInfo');
+      return "@"+entry.username+": "+entry.text + " \n[Classified as: " + entry.emotion+"]";
+    },
+    refreshMapPoints: function(){
+      //console.log(this.data)
+      var that = this;
+      if (!that.isReady || !that.map) {
+        return;
+      }
+      //console.log('LOG happymap-element: refreshMapPoints');
+      if(that.happyMapLayer) {
+        that.map.removeLayer(that.happyMapLayer);
+      }
+      if(that.intenseMapLayer) {
+        that.map.removeLayer(that.intenseMapLayer);
+      }
+      if(that.powerMapLayer) {
+        that.map.removeLayer(that.powerMapLayer);
+      }
+      if(that.emojiMapLayer) {
+        that.map.removeLayer(that.emojiMapLayer);
+      }
+      that.emojiMapLayer = new L.markerClusterGroup({
+        iconCreateFunction: function (cluster) {
+          var markers = cluster.getAllChildMarkers();
+          var max = 0;
+          var winner = '';
+          var count = {'sadness': 0, 'negative-fear': 0, 'joy': 0, 'disgust': 0, 'anger': 0, 'neutral': 0}
+          for (var i = 0; i < markers.length; i++) {
+            if(markers[i].options.emotion in count) {
+              count[markers[i].options.emotion]++;
+              if(count[markers[i].options.emotion] >= max) {
+                max = count[markers[i].options.emotion];
+                winner = markers[i].options.emotion;
+              }
+            }
+          }
+          return L.divIcon({ html: '<img src="/images/emoji/'+winner+'64.png">',
+          className: 'mycluster', iconSize: L.point(40, 40) });
+        }
+      });
+
+      var happy_data = [];
+      var intense_data = [];
+      var power_data = [];
+      that.data.forEach(function(entry) {
+        happy_data.push([entry.lat, entry.lon, entry.valence]);
+        intense_data.push([entry.lat, entry.lon, entry.arousal]);
+        power_data.push([entry.lat, entry.lon, entry.dominance]);
+        var emoji = L.marker(
+          new L.LatLng(entry.lat, entry.lon),
+          {icon: L.icon({
+                iconUrl: '/images/emoji/'+entry.emotion+'32.png',
+            }),
+          emotion: entry.emotion, text: entry.text, user: entry.username});
+        emoji.bindPopup(that._getMarkerInfo(entry));
+        // TODO añadir los emojis todos de una tacada igual que los heatpoints
+        emoji.addTo(that.emojiMapLayer);
+      });
+      that.happyMapLayer = L.heatLayer(happy_data, that.happyMapOptions);
+      that.intenseMapLayer = L.heatLayer(intense_data, that.intenseMapOptions);
+      that.powerMapLayer = L.heatLayer(power_data, that.powerMapOptions);
+
+      that.syncMapLayers();
+    },
+  });
+  </script>
+
+</dom-module>

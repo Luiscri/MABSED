@@ -1,0 +1,129 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="/bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="/bower_components/iron-icons/social-icons.html">
+
+<dom-module id="number-chart">
+  <link rel="import" type="css" href="number-chart.css">
+  <template>
+      <div class="info-box" on-tap="addfilter">
+        <div class$="{{stylebg}}">
+          <span class="info-box-icon">
+            <img src={{icon}} class="icon-image">
+          </span>
+
+          <div class="info-box-content">
+            <span class="info-box-text">{{title}}</span>
+            <span class="info-box-number">
+              <span id="number">{{number}}</span>
+            </span>
+            <div class="progress">
+              <div class="progress-bar progress-bar-name" id="barprogress" style="width: 50%"></div>
+            </div>
+            <span class="progress-description">{{ subtitle }}: {{ total }}</span>
+          </div>
+        </div>
+      </div>
+  </template>
+
+    <script>
+      var numberMax = 0;
+        Polymer({
+            is: 'number-chart',
+            properties: {
+              total: {
+                type: Number,
+                value: 0
+              },
+              stylebg: {
+                type: String,
+                value: 'bg-yellow'
+              },
+              data: {
+                type: Object,
+                observer: '_dataChanged'              
+              },
+              title: {
+                type: String,
+                value: 'Elements selected'
+              },
+              subtitle: {
+                type: String,
+                value: 'Total elements'
+              },
+              icon: {
+                type: String,
+                value: 'delete'
+              },
+              number: {
+                type: Number,
+                value: 0
+              },
+              object: {
+                type: String
+              },
+              aggkey: {
+                type: String,
+                value: 'category'
+              },
+              filters: {
+                type: Array,
+                notify: true,
+                value: function() { return []; }
+              }
+            },
+
+            kFormatter: function(num){
+              return num > 999 ? (num/1000).toFixed(1) + 'k' : num
+            },
+
+            addfilter: function(){
+              //console.log("filter add "+this.object)
+              var object = this.object;
+              var aggkey = this.aggkey;
+              //console.log(aggkey)
+              this.push('filters', {term: { 'eventId': object.toLowerCase()}})
+              console.log(this.filters)
+            },
+            
+            _dataChanged: function() {
+              //console.log("data has changed")
+              if(this.data == undefined || this.data.hits == undefined){
+                console.log("No data");
+                return;
+              }
+              numberMax = this.data.hits.total;
+              var idNum = this.$.number;
+              var idBar = this.$.barprogress;
+              var object = this.object;
+              if (object != undefined){
+                var hits = this.data.aggregations[this.aggkey].buckets;
+                //var nTweets = this.data.hits.hits[object]["_source"]["nTweets"];
+                var selected = 0;
+                hits.forEach(function(entry) {
+                  if(entry.key == object){
+                    //console.log(entry)
+                    //console.log("el object es: "+object+" el entry.key es: "+entry.key)
+                    selected = entry.doc_count;
+                  }
+                });
+                //console.log(selected);
+                idNum.innerHTML = this.kFormatter(selected);
+                progress = 100*selected/numberMax;
+                idBar.style.width = progress+"%";
+                this.total = this.kFormatter(numberMax);
+              }
+              else{
+                //console.log(this.data.hits)
+                var num = this.data.hits.total > 999 ? (this.data.hits.total/1000).toFixed(1) + 'k' : this.data.hits.total;
+                idNum.innerHTML = num;
+		            this.total = num;
+                idBar.style.width = "100%";
+              }
+            }
+
+        });
+    </script>
+
+</dom-module>

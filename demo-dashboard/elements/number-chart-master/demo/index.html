@@ -1,0 +1,61 @@
+<html>
+  <head>
+
+    <link rel="import" href="../bower_components/polymer/polymer.html">
+    <link rel="import" href="../bower_components/number-chart/number-chart.html">
+  </head>
+  
+  <body>
+    <number-chart
+      data='{}'
+      object="myObject"
+      stylebg="bg-aqua"
+      id="demo-chart1"
+      icon="icons:pets"
+      ></number-chart>
+    <number-chart
+      data='{}'
+      object="otherObject"
+      stylebg="bg-red"
+      id="demo-chart2"
+      icon="icons:accessibility"
+      title="Custom title"
+      ></number-chart>
+    <button id="databutton" onclick="changedata()">Click to change data</button>
+    <script>
+      var datas =[
+        {"hits": {
+                "total": 20000
+            },
+            "aggregations": {
+                "category": {
+                    "buckets": [
+                        {"key": "myObject", "doc_count": 3000},
+                        {"key": "otherObject", "doc_count": 1000}
+                    ]
+                }
+            }
+        },
+        {"hits": {
+                "total": 30000
+            },
+            "aggregations": {
+                "category": {
+                    "buckets": [
+                        {"key": "myObject", "doc_count": 1000},
+                        {"key": "otherObject", "doc_count": 4000}
+                    ]
+                }
+            }
+        }];
+      var numdata = 0;
+      var nc1 = document.getElementById('demo-chart1');
+      var nc2 = document.getElementById('demo-chart2');
+      nc1.data = nc2.data = datas[0];
+      function changedata(){
+        numdata += 1;
+      nc1.data = nc2.data = datas[numdata%2];
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+version: '2'
+
+services:
+  dashboard:
+    build: demo-dashboard/
+    ports:
+     - "8080:8080"
+    environment:
+      - http.cors.enabled=true
+      - http.cors.allow-origin=http://localhost:9200
+      - http.cors.allow-headers=Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With
+      - http.cors.allow-credentials=true
+    volumes:
+     - ./demo-dashboard:/usr/src/app
+    networks:
+      - dashboard-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.0
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin=http://localhost:8080
+      - http.cors.allow-headers=Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With
+      - http.cors.allow-credentials=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    mem_limit: 1g
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - dashboard-network
+    ports:
+      - 9200:9200
+
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - dashboard-network
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata1:
+    driver: local
+
+networks:
+  dashboard-network:
+    driver: bridge

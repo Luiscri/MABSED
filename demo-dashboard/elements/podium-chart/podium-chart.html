@@ -1,0 +1,312 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<dom-module id="podium-chart">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="import" type="css" href="podium-chart.css">
+
+    <template>
+        <div id="podium-box" class="row" style$="height: {{height}}px">
+            <div class="col-md-4 step-container m-0 p-0">
+                <div id="trophy-silver" class="trophy" data-toggle="modal" data-target="#myModal2" title="Check event #2">
+                    <div class="engraving">
+                        <template is="dom-repeat" items="{{getNWords(event2.main_words)}}" as="word">
+                            <p class="fit">
+                                {{word}}
+                            </p>
+                        </template>
+                    </div>
+                </div>
+                <div id="second-step" class$="{{stylebg}} centerBoth podium-number">
+                    2   
+                </div>
+            </div>
+            <div class="col-md-4 step-container m-0 p-0">
+                <div id="trophy-gold" class="trophy" data-toggle="modal" data-target="#myModal1" title="Check event #1">
+                    <div class="engraving">
+                        <template is="dom-repeat" items="{{getNWords(event1.main_words)}}" as="word">
+                            <p class="fit">
+                                {{word}}
+                            </p>
+                        </template>
+                    </div>
+                </div>
+                <div id="first-step" class$="{{stylebg}} centerBoth podium-number">
+                    1
+                </div>
+            </div>
+            <div class="col-md-4 step-container m-0 p-0">
+                <div id="trophy-bronze" class="trophy" data-toggle="modal" data-target="#myModal3" title="Check event #3">
+                    <div class="engraving">
+                        <template is="dom-repeat" items="{{getNWords(event3.main_words)}}" as="word">
+                            <p class="fit">
+                                {{word}}
+                            </p>
+                        </template>
+                    </div>
+                </div>
+                <div id="third-step" class$="{{stylebg}} centerBoth podium-number">
+                    3
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 2 -->
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="height: fit-content;">
+                    <!-- Header -->
+                    <div class$="modal-header {{stylebg}}">
+                        <img src="img/second.svg" class="ml-3" style="height: 100%;">
+                    </div>
+                    <!-- Body -->
+                    <div class="modal-body" style$="height: {{height}}px" >
+                        <div class="col-md-12">
+                            <div class="content body-content">
+                                <span class="font-weight-bold">Event information:</span>
+                                <div class="ml-5 mt-3">
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Impact:</span> {{event2.impact}}
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Main words:</span>
+                                        <template is="dom-repeat" items="{{event2.main_words}}" as="word">
+                                            {{word}} 
+                                        </template>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Related words:</span>
+                                        <template is="dom-repeat" items="{{event2.related_words}}" as="word">
+                                            ({{word.word}}, {{word.weight}}) 
+                                        </template>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Duration:</span>
+                                        <div class="flexer-row">
+                                            <ul class="ml-2">
+                                                <li>
+                                                    <span class="font-weight-bold">From:</span>
+                                                </li>
+                                                <li>
+                                                    <span class="font-weight-bold">To:</span>
+                                                </li>
+                                            </ul>
+                                            <div class="ml-4">
+                                                <div>{{event2.duration.from}}</div>
+                                                <div>{{event2.duration.to}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="my-button" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 1 -->
+        <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="height: fit-content;">
+                    <!-- Header -->
+                    <div class$="modal-header {{stylebg}}">
+                        <img src="img/first.svg" class="ml-3" style="height: 100%;">
+                    </div>
+                    <!-- Body -->
+                    <div class="modal-body" style$="height: {{height}}px" >
+                        <div class="col-md-12">
+                            <div class="content body-content">
+                                <span class="font-weight-bold">Event information:</span>
+                                <div class="ml-5 mt-3">
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Impact:</span> {{event1.impact}}
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Main words:</span>
+                                        <template is="dom-repeat" items="{{event1.main_words}}" as="word">
+                                            {{word}} 
+                                        </template>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Related words:</span>
+                                        <template is="dom-repeat" items="{{event1.related_words}}" as="word">
+                                            ({{word.word}}, {{word.weight}}) 
+                                        </template>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Duration:</span>
+                                        <div class="flexer-row">
+                                            <ul class="ml-2">
+                                                <li>
+                                                    <span class="font-weight-bold">From:</span>
+                                                </li>
+                                                <li>
+                                                    <span class="font-weight-bold">To:</span>
+                                                </li>
+                                            </ul>
+                                            <div class="ml-4">
+                                                <div>{{event1.duration.from}}</div>
+                                                <div>{{event1.duration.to}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="my-button" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 3 -->
+        <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="height: fit-content;">
+                    <!-- Header -->
+                    <div class$="modal-header {{stylebg}}">
+                        <img src="img/third.svg" class="ml-3" style="height: 100%;">
+                    </div>
+                    <!-- Body -->
+                    <div class="modal-body" style$="height: {{height}}px" >
+                        <div class="col-md-12">
+                            <div class="content body-content">
+                                <span class="font-weight-bold">Event information:</span>
+                                <div class="ml-5 mt-3">
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Impact:</span> {{event3.impact}}
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Main words:</span>
+                                        <template is="dom-repeat" items="{{event3.main_words}}" as="word">
+                                            {{word}} 
+                                        </template>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Related words:</span>
+                                        <template is="dom-repeat" items="{{event3.related_words}}" as="word">
+                                            ({{word.word}}, {{word.weight}}) 
+                                        </template>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="title-border font-weight-bold pl-3">Duration:</span>
+                                        <div class="flexer-row">
+                                            <ul class="ml-2">
+                                                <li>
+                                                    <span class="font-weight-bold">From:</span>
+                                                </li>
+                                                <li>
+                                                    <span class="font-weight-bold">To:</span>
+                                                </li>
+                                            </ul>
+                                            <div class="ml-4">
+                                                <div>{{event3.duration.from}}</div>
+                                                <div>{{event3.duration.to}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="my-button" data-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="js/fitty.min.js"></script>
+    <script>
+        setTimeout(function(){
+            fitty('.fit', {minSize: 10, maxSize: 15});
+        }, 1000);
+    </script>
+
+    <script>
+        var filtered = false;
+
+        Polymer({
+            is: 'podium-chart',
+            properties: {
+                data: {
+                    type: Object,
+                    observer: '_dataChanged'              
+                },
+
+                event1: {
+                    type: Object,
+                },
+
+                event2: {
+                    type: Object,
+                },
+
+                event3: {
+                    type: Object,
+                },
+
+                height: {
+                    type: String,
+                    value: '400'
+                },
+
+                stylebg: {
+                    type: String,
+                    value: 'bg-navy'
+                },
+
+                nwords: {
+                    type: Number,
+                    value: 3
+                },
+
+                fields: {
+                  type: Array,
+                  value: function() { return []; }
+                },
+
+                filters: {
+                  type: Array,
+                  notify: true,
+                  value: function() { return []; }
+                }
+            },
+
+            _dataChanged: function() {
+                var that = this
+                var hits = that.data.hits.hits
+                hits.forEach(function(event) {
+                    if(event._id == "1"){
+                        that.event1 = event._source
+                    }else if(event._id == "2"){
+                        that.event2 = event._source
+                    }else{
+                        that.event3 = event._source
+                    }
+                })
+            },
+
+            getNWords: function(wordsArray) {
+                var nwords = this.nwords
+                return wordsArray.slice(0, nwords);
+            }
+        });    
+    </script>
+</dom-module>

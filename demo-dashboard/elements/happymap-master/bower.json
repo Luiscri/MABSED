@@ -1,0 +1,20 @@
+{
+  "name": "happymap-element",
+  "main": "happymap-element.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "jquery": "^3.2.1",
+    "leaflet": "^1.0.3",
+    "Leaflet.EasyButton": "^2.2.0",
+    "leaflet.markercluster": "^1.0.5"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "elasticsearchjs-import": "DigElements/elasticsearchjs-import#~1.0.0",
+    "elasticjs-import": "DigElements/elasticjs-import#~1.0.1",
+    "elastic-client": "DigElements/elastic-client#~1.0.1"
+  }
+}
