@@ -17,7 +17,7 @@ import utils as utils
 import json
 
 class Corpus:
-    def __init__(self, source_directory_path, stopwords_file_path, min_absolute_freq=10, max_relative_freq=0.4, separator='\t', save_voc=False):
+    def __init__(self, source_directory_path, stopwords_file_path, min_absolute_freq, max_relative_freq, separator, save_voc=True):
         if source_directory_path[-1] != '/':
             source_directory_path = source_directory_path + '/'
         self.source_directory_path = source_directory_path
@@ -33,20 +33,20 @@ class Corpus:
         files_path = [os.path.join(self.source_directory_path, f) for f in os.listdir(self.source_directory_path) if os.path.isfile(os.path.join(self.source_directory_path, f))]
 
         # Creamos un diccionario que tenga cuantas veces se ha repetido cada palabra en todos los tweets
-        word_frequency = {} 
+        word_frequency = {}
+        tweet_buffer = set() # Buffer para añadir los tweets que vamos analizando para evitar spam
         for file in files_path:
             with open(file, 'r') as input_file:
                 csv_reader = csv.reader(input_file, delimiter=self.separator)
                 header = next(csv_reader)
                 text_column_index = header.index('text')
                 date_column_index = header.index('date')
-                tweet_buffer = [] # Buffer para añadir los tweets que vamos analizando para evitar spam
                 for line in csv_reader:
                     # Quitamos las menciones y los enlaces al tweet, y vemos si el resto del texto es igual
                     text = self.clear_mentions_links(line[text_column_index])
                     if text in tweet_buffer:
                         continue
-                    tweet_buffer.append(text)
+                    tweet_buffer.add(text)
                     self.size += 1
                     words = self.tokenize(line[text_column_index]) # Ver metodo mas abajo
                     date = line[date_column_index]
@@ -63,7 +63,7 @@ class Corpus:
                             word_frequency[word] = frequency + 1
 
 
-        # sort words w.r.t (with respect to) frequency
+        # Ordenamos el vocabulario con respecto a su frecuencia - La de mayor frecuencia primero
         vocabulary = list(word_frequency.items())
         vocabulary.sort(key=lambda x: x[1], reverse=True)
         if save_voc:
@@ -88,7 +88,8 @@ class Corpus:
         self.time_slice_count = None # El numero de time_slices necesario para dividir el Dataset
         self.tweet_count = None # Numero de tweets en cada time_slice
         self.global_freq = None # Matriz en formato CSR con la frecuencia de cada palabra en cada time_slice (para comprobar si aumenta mucho respecto a los demas)
-        self.mention_freq = None # Matiz en formato CSR con la cantidad de menciones que tiene cada palabra en cada time_slice (suma de todos los tweets)
+        self.mention_freq = None # Matriz en formato CSR con la cantidad de menciones que tiene cada palabra en cada time_slice (suma de todos los tweets)
+        self.user_freq = None # Matriz en formato CSR con la cantidad de usuarios distintos que han usado cada palabra en cada time_slice (suma de todos los tweets)
         self.time_slice_length = None # Los minutos que dura el time_slice
 
     # Elimina las menciones y los enlaces de un string devolviendo otro string con el resto del texto
@@ -111,8 +112,7 @@ class Corpus:
         # string.punctuation tiene estos caracteres: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
         return [token.strip(string.punctuation).lower() for token in raw_tokens if len(token) > 1]
 
-    # Este metodo lo usamos en el detect_event
-    # Sirve para particionar los tweets en los time_slices del Corpus
+    # Usado en detect_event: sirve para particionar los tweets en los time_slices del Corpus
     def discretize(self, time_slice_length):
         self.time_slice_length = time_slice_length
 
@@ -135,42 +135,56 @@ class Corpus:
 
         # compute word frequency
         # dok_matrix es de SciPy
-        self.global_freq = dok_matrix((len(self.vocabulary), self.time_slice_count), dtype=np.short) 
-        self.mention_freq = dok_matrix((len(self.vocabulary), self.time_slice_count), dtype=np.short)
+        self.global_freq = dok_matrix((len(self.vocabulary), self.time_slice_count), dtype=np.int32) 
+        self.mention_freq = dok_matrix((len(self.vocabulary), self.time_slice_count), dtype=np.int32)
+        self.user_freq = dok_matrix((len(self.vocabulary), self.time_slice_count), dtype=np.int32)
 
         files_path = [os.path.join(self.source_directory_path, f) for f in os.listdir(self.source_directory_path) if os.path.isfile(os.path.join(self.source_directory_path, f))]
+        tweet_buffer = set() # Buffer para añadir los tweets que vamos analizando para evitar spam
         for file in files_path:      
             with open(file, 'r') as input_file:
                 csv_reader = csv.reader(input_file, delimiter=self.separator)
                 header = next(csv_reader)
                 text_column_index = header.index('text')
                 date_column_index = header.index('date')
-                tweet_buffer = [] # Buffer para añadir los tweets que vamos analizando para evitar spam
+                user_column_index = header.index('authorId')
+                user_buffer = {} # Diccionario en el que la clave sera una palabra y el valor un set con los usuarios que la han tweeteado en este time_slice
                 for line in csv_reader:
                     # Quitamos las menciones y los enlaces al tweet, y vemos si el resto del texto es igual
                     text = self.clear_mentions_links(line[text_column_index])
                     if text in tweet_buffer:
                         continue
-                    tweet_buffer.append(text)
+                    tweet_buffer.add(text)
                     tweet_date = datetime.strptime(line[date_column_index], "%Y-%m-%d %H:%M:%S")
+                    tweet_user = line[user_column_index]
                     time_delta = (tweet_date - self.start_date)
                     time_delta = time_delta.total_seconds() / 60 # El tiempo transcurrido entre el tweet actual y el primero del Dataset en minutos
-                    time_slice = int(time_delta / self.time_slice_length) # Un numero entre 0 y 
+                    time_slice = int(time_delta / self.time_slice_length) # Un numero entre 0 y time_slice_count-1
                     self.tweet_count[time_slice] += 1
                     # tokenize the tweet and update word frequency
                     tweet_text = line[text_column_index]
                     words = self.tokenize(tweet_text)
                     mention = '@' in tweet_text
-                    for word in set(words):
+                    for word in set(words): # Transformandolo en set me quito las palabras repetidas en un mismo tweet
                         word_id = self.vocabulary.get(word)
                         if word_id is not None:
-                            self.global_freq[word_id, time_slice] += 1 
+                            self.global_freq[word_id, time_slice] += 1 # Se accede asi por ser un dok_matrix
                             if mention:
-                                self.mention_freq[word_id, time_slice] += 1 
+                                self.mention_freq[word_id, time_slice] += 1
+                            if word in user_buffer:
+                                if tweet_user in user_buffer[word]:
+                                    continue
+                                self.user_freq[word_id, time_slice] += 1
+                                user_buffer[word].add(tweet_user)
+                                continue
+                            user_buffer[word] = set()
+                            self.user_freq[word_id, time_slice] += 1
+                            user_buffer[word].add(tweet_user)
                     with open('./data/corpus/' + str(time_slice), 'a') as time_slice_file:
                         time_slice_file.write(tweet_text+'\n')
         self.global_freq = self.global_freq.tocsr()
         self.mention_freq = self.mention_freq.tocsr()
+        self.user_freq = self.user_freq.tocsr()
 
     # Pasa el time_slice (0, 13, 27...) a la correspondiente fecha que era en un principio
     def to_date(self, time_slice):
@@ -180,18 +194,12 @@ class Corpus:
     # Metodo que devuelve las P (parametro) palabras que mas veces aparezcan con la palabra principal del evento
     def cooccurring_words(self, event, p):
         main_word = event[2]
-        word_frequency = {}
+        word_frequency = {} # Diccionario que contiene la frecuencia con la que coincide cada palabra con la palabra principal del evento
         for i in range(event[1][0], event[1][1] + 1):
             with open('./data/corpus/' + str(i), 'r') as input_file:
-                tweet_buffer = [] # Buffer para añadir los tweets que vamos analizando para evitar spam
                 for tweet_text in input_file.readlines():
-                    # Quitamos las menciones y los enlaces al tweet, y vemos si el resto del texto es igual
-                    text = self.clear_mentions_links(tweet_text)
-                    if text in tweet_buffer:
-                        continue
-                    tweet_buffer.append(text)
                     words = self.tokenize(tweet_text)
-                    if event[2] in words:
+                    if main_word in words:
                         for word in words:
                             if word != main_word:
                                 if len(word) > 1 and self.vocabulary.get(word) is not None:
@@ -199,9 +207,9 @@ class Corpus:
                                     if frequency is None:
                                         frequency = 0
                                     word_frequency[word] = frequency + 1
-        # sort words w.r.t frequency
+        # Ordenamos las palabras con respecto a su frecuencia - La de mayor frecuencia primero
         vocabulary = list(word_frequency.items())
-        vocabulary.sort(key=lambda x: x[1], reverse=True)
+        vocabulary.sort(key=lambda x: x[1], reverse=True) # Ordena 
         top_cooccurring_words = []
         for word, frequency in vocabulary:
             top_cooccurring_words.append(word)

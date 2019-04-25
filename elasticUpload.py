@@ -14,7 +14,7 @@ if args.idx != 'events' and args.idx != 'tweets':
 elif args.idx == 'events':
     datafile = 'detected_events.txt'
 else:
-    datafile = 'tweets.txt'
+    datafile = 'detected_tweets.txt'
 
 def upload(index):
     es = Elasticsearch(hosts='http://localhost:9200')

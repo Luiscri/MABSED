@@ -21,17 +21,10 @@
     <link rel="import" href="/styles/main.css" type="css">
 
     <template>
-        <iron-ajax auto
-            url="queries.json"
-            handle-as="json"
-            last-response="{{queries}}">   
-        </iron-ajax>
-
-        <div class="my-5" style="display: flex;flex-direction: row;justify-content: center;align-content: center;width: 100%;">
+        <div class="my-3" class="centerBoth" style="width: 100%;">
             <div class="top">
-                <img src="img/MABSEDlogoAzul.png" style="object-fit: cover;">
+                <img src="img/MABSEDlogoAzul.png" style="height: 150px; width: auto;">
             </div>
-
         </div>
   
         <div class="container my-5">
@@ -41,7 +34,7 @@
                 <div class="col-md-12">
                     <podium-chart
                         data="{{eventsData}}"
-                        height="400"
+                        height="300"
                         stylebg="bg-navy"
                         nwords="3">
                     </podium-chart>
@@ -116,7 +109,7 @@
 
                     <!-- visualize data in case of connection error -->
                     <happymap-element
-                        selected="[[getPlaces(tweetsData)]]">    
+                        data="[[getPlaces(tweetsData)]]">    
                     </happymap-element>
                 </div>
             </div>
@@ -187,7 +180,7 @@
                 var places = []
                 data.hits.hits.forEach(function(entry){
                     if('lat' in entry._source){
-                        places.push({'lat': entry._source.lat, 'lon': entry._source.long, 'text': entry._source.text});
+                        places.push({'lat': entry._source.lat, 'lon': entry._source.lon});
                     }
                 });
                 return places;
@@ -252,9 +245,9 @@
                                     }
                                 },
 
-                                long: {
+                                lon: {
                                     terms: {
-                                        field: "long",
+                                        field: "lon",
                                         order: {
                                         _count: "desc"
                                         }

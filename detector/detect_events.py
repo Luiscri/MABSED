@@ -40,13 +40,13 @@ if __name__ == '__main__':
     time_slice_length = args.tsl
     print('Partitioning tweets into %d-minute time-slices...' % time_slice_length)
     start_time = timeit.default_timer()
-    my_corpus.discretize(time_slice_length) # Ventanas de 30 minutos de valor por defecto
+    my_corpus.discretize(time_slice_length)
     elapsed = timeit.default_timer() - start_time
     print('Partitioning done in %f seconds.' % elapsed)
 
     print('Running MABSED...')
     k = args.k # Numero de eventos a detectar
-    p = args.p # Numero maximo de palabras que describen cada evento (30 minutos por defecto)
+    p = args.p # Numero maximo de palabras que describen cada evento (10 por defecto)
     theta = args.t # Umbral de peso por encima del cual una palabra se considera relevante (0.6 por defecto)
     sigma = args.s # Sensibilidad a los eventos duplicados (si es alta aumenta numero de eventos duplicados y la precision)
     start_time = timeit.default_timer()
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # Guardamos los resultados
     eventsOutput = './detected_events.txt'
-    tweetsOutput = './tweets.txt'
+    tweetsOutput = './detected_tweets.txt'
     mabsed.save_events(eventsOutput)
     mabsed.save_tweets(tweetsOutput)
     print('Events data saved in:')

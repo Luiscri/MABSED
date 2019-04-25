@@ -60,41 +60,65 @@
                         <img src="img/second.svg" class="ml-3" style="height: 100%;">
                     </div>
                     <!-- Body -->
-                    <div class="modal-body" style$="height: {{height}}px" >
+                    <div class="modal-body">
                         <div class="col-md-12">
                             <div class="content body-content">
                                 <span class="font-weight-bold">Event information:</span>
                                 <div class="ml-5 mt-3">
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Impact:</span> {{event2.impact}}
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Main words:</span>
-                                        <template is="dom-repeat" items="{{event2.main_words}}" as="word">
-                                            {{word}} 
-                                        </template>
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Related words:</span>
-                                        <template is="dom-repeat" items="{{event2.related_words}}" as="word">
-                                            ({{word.word}}, {{word.weight}}) 
-                                        </template>
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Duration:</span>
-                                        <div class="flexer-row">
-                                            <ul class="ml-2">
-                                                <li>
-                                                    <span class="font-weight-bold">From:</span>
-                                                </li>
-                                                <li>
-                                                    <span class="font-weight-bold">To:</span>
-                                                </li>
-                                            </ul>
-                                            <div class="ml-4">
-                                                <div>{{event2.duration.from}}</div>
-                                                <div>{{event2.duration.to}}</div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <span class="title-border font-weight-bold pl-3">Impact:</span>
+                                            <div class="flexer-row">
+                                                <ul class="ml-2">
+                                                    <li>
+                                                        <span class="font-weight-bold">Total:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">Mentions:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">Users:</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="ml-4 text-right">
+                                                    <div>{{event2.impact.total}}</div>
+                                                    <div>{{event2.impact.mention}}</div>
+                                                    <div>{{event2.impact.user}}</div>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <span class="title-border font-weight-bold pl-3">Duration:</span>
+                                            <div class="flexer-row">
+                                                <ul class="ml-2">
+                                                    <li>
+                                                        <span class="font-weight-bold">From:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">To:</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="ml-4">
+                                                    <div>{{event2.duration.from}}</div>
+                                                    <div>{{event2.duration.to}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <span class="title-border font-weight-bold pl-3">Main words:</span>
+                                            <template is="dom-repeat" items="{{event2.main_words}}" as="word">
+                                                {{word}}  
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <span class="title-border font-weight-bold pl-3">Related words:</span>
+                                            <template is="dom-repeat" items="{{event2.related_words}}" as="word">
+                                                ({{word.word}}, {{word.weight}})  
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
@@ -120,41 +144,65 @@
                         <img src="img/first.svg" class="ml-3" style="height: 100%;">
                     </div>
                     <!-- Body -->
-                    <div class="modal-body" style$="height: {{height}}px" >
+                    <div class="modal-body">
                         <div class="col-md-12">
                             <div class="content body-content">
                                 <span class="font-weight-bold">Event information:</span>
                                 <div class="ml-5 mt-3">
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Impact:</span> {{event1.impact}}
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Main words:</span>
-                                        <template is="dom-repeat" items="{{event1.main_words}}" as="word">
-                                            {{word}} 
-                                        </template>
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Related words:</span>
-                                        <template is="dom-repeat" items="{{event1.related_words}}" as="word">
-                                            ({{word.word}}, {{word.weight}}) 
-                                        </template>
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Duration:</span>
-                                        <div class="flexer-row">
-                                            <ul class="ml-2">
-                                                <li>
-                                                    <span class="font-weight-bold">From:</span>
-                                                </li>
-                                                <li>
-                                                    <span class="font-weight-bold">To:</span>
-                                                </li>
-                                            </ul>
-                                            <div class="ml-4">
-                                                <div>{{event1.duration.from}}</div>
-                                                <div>{{event1.duration.to}}</div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <span class="title-border font-weight-bold pl-3">Impact:</span>
+                                            <div class="flexer-row">
+                                                <ul class="ml-2">
+                                                    <li>
+                                                        <span class="font-weight-bold">Total:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">Mentions:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">Users:</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="ml-4 text-right">
+                                                    <div>{{event1.impact.total}}</div>
+                                                    <div>{{event1.impact.mention}}</div>
+                                                    <div>{{event1.impact.user}}</div>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <span class="title-border font-weight-bold pl-3">Duration:</span>
+                                            <div class="flexer-row">
+                                                <ul class="ml-2">
+                                                    <li>
+                                                        <span class="font-weight-bold">From:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">To:</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="ml-4">
+                                                    <div>{{event1.duration.from}}</div>
+                                                    <div>{{event1.duration.to}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <span class="title-border font-weight-bold pl-3">Main words:</span>
+                                            <template is="dom-repeat" items="{{event1.main_words}}" as="word">
+                                                {{word}}  
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <span class="title-border font-weight-bold pl-3">Related words:</span>
+                                            <template is="dom-repeat" items="{{event1.related_words}}" as="word">
+                                                ({{word.word}}, {{word.weight}})  
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
@@ -180,41 +228,65 @@
                         <img src="img/third.svg" class="ml-3" style="height: 100%;">
                     </div>
                     <!-- Body -->
-                    <div class="modal-body" style$="height: {{height}}px" >
+                    <div class="modal-body">
                         <div class="col-md-12">
                             <div class="content body-content">
                                 <span class="font-weight-bold">Event information:</span>
                                 <div class="ml-5 mt-3">
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Impact:</span> {{event3.impact}}
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Main words:</span>
-                                        <template is="dom-repeat" items="{{event3.main_words}}" as="word">
-                                            {{word}} 
-                                        </template>
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Related words:</span>
-                                        <template is="dom-repeat" items="{{event3.related_words}}" as="word">
-                                            ({{word.word}}, {{word.weight}}) 
-                                        </template>
-                                    </div>
-                                    <div class="mb-3">
-                                        <span class="title-border font-weight-bold pl-3">Duration:</span>
-                                        <div class="flexer-row">
-                                            <ul class="ml-2">
-                                                <li>
-                                                    <span class="font-weight-bold">From:</span>
-                                                </li>
-                                                <li>
-                                                    <span class="font-weight-bold">To:</span>
-                                                </li>
-                                            </ul>
-                                            <div class="ml-4">
-                                                <div>{{event3.duration.from}}</div>
-                                                <div>{{event3.duration.to}}</div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <span class="title-border font-weight-bold pl-3">Impact:</span>
+                                            <div class="flexer-row">
+                                                <ul class="ml-2">
+                                                    <li>
+                                                        <span class="font-weight-bold">Total:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">Mentions:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">Users:</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="ml-4 text-right">
+                                                    <div>{{event3.impact.total}}</div>
+                                                    <div>{{event3.impact.mention}}</div>
+                                                    <div>{{event3.impact.user}}</div>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <span class="title-border font-weight-bold pl-3">Duration:</span>
+                                            <div class="flexer-row">
+                                                <ul class="ml-2">
+                                                    <li>
+                                                        <span class="font-weight-bold">From:</span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="font-weight-bold">To:</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="ml-4">
+                                                    <div>{{event3.duration.from}}</div>
+                                                    <div>{{event3.duration.to}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <span class="title-border font-weight-bold pl-3">Main words:</span>
+                                            <template is="dom-repeat" items="{{event3.main_words}}" as="word">
+                                                {{word}}  
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <span class="title-border font-weight-bold pl-3">Related words:</span>
+                                            <template is="dom-repeat" items="{{event3.related_words}}" as="word">
+                                                ({{word.word}}, {{word.weight}})  
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
