@@ -1,6 +1,7 @@
 .git/
 test.py
 demo-dashboard/k8s/
+detector/dynet-base/
 detector/data/corpus/
 detector/data/tweets/
 documents/

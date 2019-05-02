@@ -1,6 +1,7 @@
 # coding: utf-8
 import numpy as np
 
+# ¿Y en el cero que pasa?
 def erdem_correlation(array_1, array_2):
     a_12 = 0.
     a_1 = 0.
@@ -11,15 +12,15 @@ def erdem_correlation(array_1, array_2):
         a_2 += (array_2[i] - array_2[i-1]) * (array_2[i] - array_2[i-1])
     a_1 = np.sqrt(a_1/(len(array_1) - 1))
     a_2 = np.sqrt(a_2/(len(array_2) - 1))
-    coefficient = a_12/(len(array_1) * a_1 * a_2)
+    coefficient = a_12/(len(array_1) * a_1 * a_2) # ¿Aquí no sería len(array_1) - 1?
     return coefficient
 
-
+# Interval_0 es la palabra relacionada e interval_1 es la palabra principal
 def overlap_coefficient(interval_0, interval_1):
     intersection_cardinality = float(min(interval_0[1], interval_1[1]) - max(interval_0[0], interval_1[0]))
     smallest_interval_cardinality = float(min(interval_0[1] - interval_0[0], interval_1[1] - interval_1[0]))
-    '''
+
     if smallest_interval_cardinality == 0:
-        return 0.99
-    '''
-    return float(intersection_cardinality / smallest_interval_cardinality) # Hay veces que smallest_interval_cardinality da 0 y da error
+        smallest_interval_cardinality = 1
+
+    return float(intersection_cardinality / smallest_interval_cardinality)

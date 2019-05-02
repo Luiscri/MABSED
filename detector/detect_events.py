@@ -21,28 +21,29 @@ if __name__ == '__main__':
     p.add_argument('--maf', metavar='min_absolute_frequency', type=int, help='Minimum absolute word frequency, default to 10', default=10)
     # Valor maximo relativo de la frecuencia que puede tener una palabra respecto del total de TWEETS (no de palabras)
     p.add_argument('--mrf', metavar='max_relative_frequency', type=float, help='Maximum relative word frequency, default to 0.4', default=0.4)
+    p.add_argument('--mrs', metavar='max_relative_similarity', type=float, help='Maximum relative similarity between tweets, default to 0.7', default=0.7)
     p.add_argument('--tsl', metavar='time_slice_length', type=int, help='Time-slice length, default to 30 (minutes)', default=30) # Dividimos el corpus en ventanas de 30 minutos
     p.add_argument('--p', metavar='p', type=int, help='Number of candidate words per event, default to 10', default=10) # Igual cambiar esto para que salgan menos
     p.add_argument('--t', metavar='theta', type=float, help='Theta, default to 0.6', default=0.6)
     p.add_argument('--s', metavar='sigma', type=float, help='Sigma, default to 0.6', default=0.6)
     args = p.parse_args()
     print('Parameters:')
-    print('   Corpus: %s\n   k: %d\n   Stop-words: %s\n   Min. abs. word frequency: %d\n   Max. rel. word frequency: %f' %
-          (args.i, args.k, args.sw, args.maf, args.mrf))
+    print('   Corpus: %s\n   k: %d\n   Stop-words: %s\n   Min. abs. word frequency: %d\n   Max. rel. word frequency: %f\n   Max. rel. similarity: %f' %
+          (args.i, args.k, args.sw, args.maf, args.mrf, args.mrs))
     print('   p: %d\n   theta: %f\n   sigma: %f' % (args.p, args.t, args.s))
 
-    print('Loading corpus...')
-    start_time = timeit.default_timer()
-    my_corpus = Corpus(source_directory_path=args.i, stopwords_file_path=args.sw, min_absolute_freq=args.maf, max_relative_freq=args.mrf, separator=args.sep)
+    print('Loading corpus...') 
+    start_time = script_time = timeit.default_timer()
+    my_corpus = Corpus(source_directory_path=args.i, stopwords_file_path=args.sw, min_absolute_freq=args.maf, max_relative_freq=args.mrf, max_relative_sim=args.mrs, separator=args.sep, time_slice_length=args.tsl)
     elapsed = timeit.default_timer() - start_time
     print('Corpus loaded in %f seconds.' % elapsed)
 
     time_slice_length = args.tsl
-    print('Partitioning tweets into %d-minute time-slices...' % time_slice_length)
+    print('Creating impact matrix...')
     start_time = timeit.default_timer()
-    my_corpus.discretize(time_slice_length)
+    my_corpus.discretize()
     elapsed = timeit.default_timer() - start_time
-    print('Partitioning done in %f seconds.' % elapsed)
+    print('Matrix created in %f seconds.' % elapsed)
 
     print('Running MABSED...')
     k = args.k # Numero de eventos a detectar
@@ -59,8 +60,17 @@ if __name__ == '__main__':
     # Guardamos los resultados
     eventsOutput = './detected_events.txt'
     tweetsOutput = './detected_tweets.txt'
+    spamOutput = './detected_spam.txt'
+    vocabularyOutput = './vocabulary.txt'
+    selfVocabularyOutput = './self_vocabulary.txt'
     mabsed.save_events(eventsOutput)
     mabsed.save_tweets(tweetsOutput)
     print('Events data saved in:')
     print('   '+eventsOutput)
     print('   '+tweetsOutput)
+    print('   '+spamOutput)
+    print('   '+vocabularyOutput)
+    print('   '+selfVocabularyOutput)
+    elapsed = timeit.default_timer() - script_time
+
+    print('Total script time: %f seconds.' % elapsed)

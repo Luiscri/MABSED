@@ -47,7 +47,6 @@ class MABSED:
         basic_events = [] # Esto va a ser una lista de tuplas
         for vocabulary_entry in self.corpus.vocabulary.items():
             mention_event = self.get_mention_subsequence(vocabulary_entry)
-            # frequency_event = self.get_frequency_subsequence(vocabulary_entry)
             user_event = self.get_user_subsequence(vocabulary_entry)
             basic_events.append(self.merge_basic_event(mention_event, user_event))           
         print('   Detected events: %d' % len(basic_events))
@@ -112,45 +111,6 @@ class MABSED:
         # return the difference between the observed frequency and the expected frequency
         return observation - expectation
 
-    def get_frequency_subsequence(self, vocabulary_entry):
-        # vocabulary_entry[1] es el puesto en menciones de cada palabra del diccionario, es decir, 0, 1, 2...
-        frequency = self.corpus.global_freq[vocabulary_entry[1], :].toarray() # Aqui tenemos un array con otro array dentro
-        frequency = frequency[0, :] # Ahora tenemos un unico array, que es la columna de la matriz que corresponde a esa palabra del vocabulario, y cada fila sera un time_slice
-        total_freq = np.sum(frequency) # Sumamos para saber la frecuencia de esa palabra en total en todo el corpus
-
-        # compute the time-series that describes the evolution of mention-anomaly
-        anomaly = [] # Aqui tendremos un array cuyo indice seran los time-slices y cuyos valores seran un float que indica lo que sobresale o decae la frecuencia asociada a dicha palabra respecto de lo esperado en ese time_slice
-        # i es el time_slice de cada vuelta
-        for i in range(0, self.corpus.time_slice_count):
-            anomaly.append(self.frequency_anomaly(i, frequency[i], total_freq))
-        max_ending_here = max_so_far = 0
-        a = b = a_ending_here = 0
-        # Cuando acabe este bucle for, a y b representaran el intervalo en el que la suma de las anomalias ha destacado mas de la media
-        for idx, ano in enumerate(anomaly):
-            max_ending_here = max(0, max_ending_here + ano)
-            if max_ending_here == 0:
-                # a new bigger sum may start from here
-                a_ending_here = idx
-            if max_ending_here > max_so_far:
-                # the new sum from a_ending_here to idx is bigger
-                a = a_ending_here+1
-                max_so_far = max_ending_here
-                b = idx
-
-        # return the event description
-        max_interval = (a, b) # Tupla: intervalo en el que la suma de las anomalias ha destacado mas de la media
-        mag = np.sum(anomaly[a:b+1]) # Magnitud de la anomalia
-        basic_event = (mag, max_interval, vocabulary_entry[0], anomaly) # Esto es una tupla, es como una lista pero no podemos editar sus elementos
-        return basic_event
-
-    # Devuelve en formato float un numero que indica como sobresalen o decaen la frecuencia de esa palabra en el time_slice dado respecto a la media de esa palabra en el corpus
-    def frequency_anomaly(self, time_slice, observation, total_freq):
-        # compute the expected frequency of the given word at this time-slice
-        expectation = float(self.corpus.tweet_count[time_slice]) * (float(total_freq)/(float(self.corpus.size)))
-
-        # return the difference between the observed frequency and the expected frequency
-        return observation - expectation
-
     def get_user_subsequence(self, vocabulary_entry):
         # vocabulary_entry[1] es el puesto en menciones de cada palabra del diccionario, es decir, 0, 1, 2...
         user_freq = self.corpus.user_freq[vocabulary_entry[1], :].toarray() # Aqui tenemos un array con otro array dentro
@@ -194,7 +154,7 @@ class MABSED:
     def phase2(self, basic_events):
         print('Phase 2...')
 
-        # sort the events detected during phase 1 according to their magnitude of impact
+        # sort the events detected during phase 1 according to their total magnitude of impact
         basic_events.sort(key=lambda tup: tup[0][0], reverse=True)
 
         # create the event graph (directed) and the redundancy graph (undirected)
@@ -202,7 +162,7 @@ class MABSED:
         self.redundancy_graph = nx.Graph(name='Redundancy graph')
         i = 0
         unique_events = 0
-        refined_events = []
+        refined_events = [] # Evento con main word y related words (como mucho k elementos)
 
         # phase 2 goes on until the top k (distinct) events have been identified
         while unique_events < self.k and i < len(basic_events):
@@ -234,15 +194,17 @@ class MABSED:
         # merge redundant events and save the result
         self.events = self.merge_redundant_events(refined_events)
 
+    # Esto va a ser un evento principal con sus palabras relacionadas. Antes de añadirlo vemos si tiene algo
     def update_graphs(self, event):
         redundant = False
         main_word = event[2]
         # check whether 'event' is redundant with another event already stored in the event graph or not
-        if self.event_graph.has_node(main_word):
+        if self.event_graph.has_node(main_word): # Esto pasa cuando la main_word de un evento es igual a la related_word de otro main_word
             for related_word, weight in event[3]:
-                if self.event_graph.has_edge(main_word, related_word):
-                    interval_0 = self.event_graph.node[related_word]['interval']
-                    interval_1 = event[1]
+                # Yo me cargaba esta linea de abajo y comprobaba el solapamiento directamente
+                if self.event_graph.has_edge(main_word, related_word): # Solo va a tener un edge si este evento redundante tiene como related word la main word del evento al que estamos redundando
+                    interval_0 = self.event_graph.node[related_word]['interval'] # Intervalo de la palabra relacionada
+                    interval_1 = event[1] # Intervalo de la palabra principal
                     if st.overlap_coefficient(interval_0, interval_1) > self.sigma:
                         self.redundancy_graph.add_node(main_word, description=event)
                         self.redundancy_graph.add_node(related_word, description=self.get_event(related_word))
@@ -250,9 +212,9 @@ class MABSED:
                         redundant = True
                         break
         if not redundant:
-            self.event_graph.add_node(event[2], interval=event[1], mag=event[0][0], main_term=True)
+            self.event_graph.add_node(main_word, interval=event[1], mag=event[0][0], main_term=True)
             for related_word, weight in event[3]:
-                self.event_graph.add_edge(related_word, event[2], weight=weight)
+                self.event_graph.add_edge(related_word, main_word, weight=weight) # Como es directed va desde el nodo related_word (lo creamos) al nodo event[2] (la flecha acaba aqui)
         return not redundant
 
     def get_event(self, main_term):
@@ -346,6 +308,10 @@ class MABSED:
             'user': event[4][2]
         }
         saving_data['anomaly'] = anomaly_json
+        saving_data['corpus'] = {
+            'start_date': self.corpus.start_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'time_slice_length': self.corpus.time_slice_length
+        }
         
         saving_json = json.dumps(saving_data, ensure_ascii=False)
         with open(output_file, 'a') as f:
@@ -359,10 +325,13 @@ class MABSED:
         for idx, event in enumerate(self.events):
             self.save_event(event, idx+1, output_file)
 
-    def save_tweet(self, tweet, tweet_id, coordinate, event, event_id, output_file):
+    def save_tweet(self, line_json, event, event_id, output_file):
         saving_tweet = {}
         main_words = event[2].split(', ')
+        tweet = line_json['text']
         words = self.corpus.tokenize(tweet)
+        tweet_id = line_json['tweetId']
+        coordinates = line_json['coordinates']
 
         for main_word in main_words:
             if main_word in words:
@@ -371,57 +340,22 @@ class MABSED:
                         saving_tweet['eventId'] = event_id
                         saving_tweet['tweetId'] = tweet_id
                         saving_tweet['text'] = tweet
-                        if(coordinate != 'null'):
-                            points = coordinate.replace('[','').replace(']','').split(",")
+                        if(coordinates != 'null'):
+                            points = coordinates.replace('[','').replace(']','').split(",")
                             saving_tweet['lat'] = float(points[1])
                             saving_tweet['lon'] = float(points[0])
                         saving_json = json.dumps(saving_tweet, ensure_ascii=False)
                         with open(output_file, 'a') as f:
-                            f.write(saving_json)
-                            f.write('\n')
-                        break
-                break
+                            f.write(saving_json+'\n')
+                        return
 
     def save_tweets(self, output_file):
         if os.path.exists(output_file):
             os.remove(output_file)
 
-        saving_tweets = {}
         for idx, event in enumerate(self.events):
-            files_path = self.get_files_interval(event)
-            for file in files_path:
-                with open(file, 'r') as input_file:
-                    csv_reader = csv.reader(input_file, delimiter=self.separator)
-                    header = next(csv_reader)
-                    text_column_index = header.index('text')
-                    coordinates_column_index = header.index('coordinates')
-                    tweet_id_column_index = header.index('tweetId')
-                    for line in csv_reader:
-                        tweet = line[text_column_index]
-                        tweet_id = line[tweet_id_column_index]
-                        coordinate = line[coordinates_column_index]
-                        self.save_tweet(tweet, tweet_id, coordinate, event, idx+1, output_file)
-
-    def get_files_interval(self, event):
-        files_name = [f.split('.csv')[0] for f in os.listdir(self.corpus.source_directory_path) if os.path.isfile(os.path.join(self.corpus.source_directory_path, f))]
-        files_name = sorted(files_name, key=lambda x: datetime.datetime.strptime(x, "%Y-%m-%d-%H-%M-%S")) # Sigue siendo lista de strings
-        date_from = self.corpus.to_date(event[1][0]) # Objeto datetime
-        date_to = self.corpus.to_date(event[1][1])
-        if date_from == date_to:
-            date_to += datetime.timedelta(minutes=30)
-
-        result = [] # Lista de fechas en formato string
-        for file in files_name:
-            file_datetime = datetime.datetime.strptime(file,"%Y-%m-%d-%H-%M-%S")
-            if file_datetime > date_from and file_datetime < date_to:
-                result.append(file)
-
-        first_idx = files_name.index(result[0])
-        last_idx = files_name.index(result[-1])
-        if first_idx != 0:
-            result.append(files_name[first_idx-1])
-        if last_idx != len(files_name)-1:
-            result.append(files_name[last_idx+1])
-        result = sorted(result, key=lambda x: datetime.datetime.strptime(x, "%Y-%m-%d-%H-%M-%S"))
-
-        return [os.path.join(self.corpus.source_directory_path, f,)+'.csv' for f in result]
+            for i in range(event[1][0], event[1][1] + 1):
+                with open('./data/corpus/' + str(i), 'r') as input_file:
+                    for line in input_file.readlines():
+                        line_json = json.loads(line)
+                        self.save_tweet(line_json, event, idx+1, output_file)
