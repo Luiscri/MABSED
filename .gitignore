@@ -1,4 +1,5 @@
 .git/
+test.py
 demo-dashboard/k8s/
 detector/data/corpus/
 detector/data/tweets/

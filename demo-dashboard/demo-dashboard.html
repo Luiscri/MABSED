@@ -1,10 +1,11 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/bower_components/paper-material/paper-material.html">
-<link rel="import" href="/elements/happymap-master/happymap-element.html">
+<link rel="import" href="/elements/happymap/happymap-element.html">
 <link rel="import" href="/elements/material-search/material-search.html">
-<link rel="import" href="/elements/tweet-chart-master/tweet-chart.html">
-<link rel="import" href="/elements/number-chart-master/number-chart.html">
+<link rel="import" href="/elements/tweet-chart/tweet-chart.html">
+<link rel="import" href="/elements/number-chart/number-chart.html">
 <link rel="import" href="/elements/podium-chart/podium-chart.html">
+<link rel="import" href="/elements/google-chart-elasticsearch/google-chart.html">
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -99,12 +100,26 @@
                 </div>
             </div>
             
-            <div class="row centerBoth">
-                <div class="col-md-6 mt-5">
+            <div class="row centerBoth mt-5">
+                <div class="col-md-6">
+                    <google-chart 
+                        data="{{eventsData}}"
+                        field="eventId"
+                        subfield="total"
+                        filters="{{filters}}"
+                        type='line'
+                        param='{{param}}'
+                        icon='timeline'
+                        options='{"title": "Evolution of events over time"}'
+                        optionsbi='{"height": "350", "legend": {"position": "right", "alignment": "center"}, "hAxis": {"title": "Date"}, "vAxis": {"title": "Impact"}}'
+                        cols='[{"label": "Date", "type": "string"}, {"label": "Event #1", "type": "number"}, {"label": "Event #2", "type": "number"}, {"label": "Event #3", "type": "number"}]'>
+                    </google-chart>
+                </div>
+                <div class="col-md-6">
                     <div class="top_bar_happy_map">
                         <iron-icon icon="maps:place" class="style-scope dashboard-somedi x-scope iron-icon-1">
                         </iron-icon>
-                        <span class="style-scope google-chart">Geolocation of the events</span>
+                        <span class="style-scope happymap-header">Geolocation of the events</span>
                     </div>
 
                     <!-- visualize data in case of connection error -->
@@ -274,7 +289,7 @@
                             aggs: {
                                 eventId: {
                                     terms: {
-                                        field: "_id",
+                                        field: "id.keyword",
                                         order: {
                                             _count: "desc"
                                         }

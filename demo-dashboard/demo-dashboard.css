@@ -8,7 +8,7 @@ paper-material{
   background: white;
 }
 
-google-chart {
+happymap-header {
   margin: 0 auto;
 }
 
@@ -70,7 +70,7 @@ h2 {
   text-shadow: 0 -1px 1px rgba(0,0,0,0.35);
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
 }
-      
+
 .nav {
   color: #000;
   text-decoration: none;
@@ -157,6 +157,11 @@ iron-pages {
   height: 35px;
   line-height: 35px;
 }
+
+google-chart {
+  height: 400px;
+}
+
 
 .top_bar_happy_map {
   width: 100%;

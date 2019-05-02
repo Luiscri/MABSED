@@ -1,0 +1,85 @@
+:host {
+  margin: 0;
+  padding: 0;
+  width: 400px;
+  height: 300px;
+}
+
+:host([type="gauge"]) {
+  width: 300px;
+  height: 300px;
+}
+
+#chartdiv {
+  width: 100%;
+}
+
+#nodata {
+    position: absolute;
+    width: 100%;
+    line-height: 35px;
+    justify-content: center; 
+}
+
+.top-bar{
+  width: 100%; 
+  background-color: #063b65; 
+  border-radius: 5px 5px 0 0; 
+  color: white; 
+  text-align: center; 
+  height: 35px; 
+  line-height: 35px;
+}
+
+.button-container{
+  width: 100%; 
+  position: relative;
+}
+
+.google-button{
+  padding: 5px 10px;
+  background-color: #063b65;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.right-located{
+  position: absolute;
+  right: 0px;
+}
+
+.flex-row{
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-bar span {
+  vertical-align: middle;
+}
+
+iron-icon {
+  margin-right: 8px;
+  width: 21px;
+  height: 21px;
+}
+
+paper-icon-button.green {
+  color: var(--paper-green-500);
+}
+
+paper-icon-button.green:hover {
+  background: var(--paper-green-50);
+  border-radius: 50%;
+}
+
+paper-material {
+  background-color: #ffffff
+}
