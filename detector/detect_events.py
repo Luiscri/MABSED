@@ -39,11 +39,11 @@ if __name__ == '__main__':
     print('Corpus loaded in %f seconds.' % elapsed)
 
     time_slice_length = args.tsl
-    print('Creating impact matrix...')
+    print('Creating impact matrices...')
     start_time = timeit.default_timer()
-    my_corpus.discretize()
+    my_corpus.compute_matrices()
     elapsed = timeit.default_timer() - start_time
-    print('Matrix created in %f seconds.' % elapsed)
+    print('Matrices created in %f seconds.' % elapsed)
 
     print('Running MABSED...')
     k = args.k # Numero de eventos a detectar
@@ -74,3 +74,5 @@ if __name__ == '__main__':
     elapsed = timeit.default_timer() - script_time
 
     print('Total script time: %f seconds.' % elapsed)
+
+    mabsed.print_graphs()

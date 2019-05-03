@@ -178,10 +178,6 @@ class Corpus:
                     elif tweet_date < date_from:
                         date_from = tweet_date
                     tweet = self.clear_mentions_links(line[text_column_index])
-                    '''
-                    lemmas = self.tokenize(tweet)
-                    tweets.append(' '.join(lemmas))
-                    '''
                     tweets.append(tweet)
         date_from = datetime.strptime(date_from, "%Y-%m-%d %H:%M:%S") # Lo pasamos a formato Date (estaba en String) 
         date_to = datetime.strptime(date_to, "%Y-%m-%d %H:%M:%S") # Lo pasamos a formato Date (estaba en String)
@@ -189,37 +185,40 @@ class Corpus:
 
     # Devuelve una lista de lemas eliminando los signos de puntuacion y los links
     def tokenize(self, text):
-        lemmas = []
         # split the documents into tokens based on whitespaces
         words = text.split()
         # Nos quitamos los enalces
         words_without_links = [word for word in words if 'http' not in word]
         # Sustituimos los signos de puntuacion por espacios por si van pegadas las palabras
-        t = str.maketrans("'!¡?¿.,\"()", "          ")
+        t = str.maketrans("'!¡?¿.,\"()", "          ") # Translate solo se le puede aplicar a un string
         raw_tokens = ' '.join(words_without_links).translate(t).split()
         # Strip solo quita los signos de puntuacion al principio y al final de la palabra
         # string.punctuation tiene estos caracteres: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
         punctuation = string.punctuation.replace('@', '').replace('#', '')
-        words = [token.strip(punctuation).lower() for token in raw_tokens if len(token) > 1]
-        '''
+        return [token.strip(punctuation).lower() for token in raw_tokens if len(token) > 1]
+
+
+    def lemmatize(self, words):
+        lemmas = []
         tokens = []
         for idx, word in enumerate(words):
             if '@' in word or '#' in word:
                 lemmas.append(word)
             else:
-                entry = ConllEntry(idx+1, word, "_", "_", "_", "_", 0, "_", "_", "_")
-                tokens.append(entry)
+                if word != '':
+                    entry = ConllEntry(idx+1, word, "_", "_", "_", "_", 0, "_", "_", "_")
+                    tokens.append(entry)
 
         # lemmas
+        if len(tokens) == 0:
+            return []
         sentences = self.lemmatizer([tokens])
         for entry in sentences[0]:
             lemmas.append(entry.lemma)
         return lemmas
-        '''
-        return words
 
-    # Usado en detect_event: sirve para particionar los tweets en los time_slices del Corpus
-    def discretize(self):
+    # Creamos las matrices que usaremos para el proceso de deteccion
+    def compute_matrices(self):
         # compute word frequency
         # dok_matrix es de SciPy
         self.global_freq = dok_matrix((len(self.vocabulary), self.time_slice_count), dtype=np.int32) 
@@ -232,10 +231,9 @@ class Corpus:
                 for line in input_file.readlines():
                     line_json = json.loads(line)
                     tweet_text = line_json['text']
-                    tweet_date = datetime.strptime(line_json['date'], "%Y-%m-%d %H:%M:%S")
                     tweet_user = line_json['authorId']
                     time_slice = i
-                    # tokenize the tweet and update word frequency
+                    # tokenize the tweet and update matrices
                     words = self.tokenize(tweet_text)
                     mention = '@' in tweet_text
                     for word in set(words): # Transformandolo en set me quito las palabras repetidas en un mismo tweet
@@ -253,6 +251,7 @@ class Corpus:
                             user_buffer[word] = set()
                             self.user_freq[word_id, time_slice] += 1
                             user_buffer[word].add(tweet_user)
+
         self.global_freq = self.global_freq.tocsr()
         self.mention_freq = self.mention_freq.tocsr()
         self.user_freq = self.user_freq.tocsr()

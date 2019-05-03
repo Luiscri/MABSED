@@ -5,6 +5,7 @@ from multiprocessing import Pool
 
 # math
 import networkx as nx
+import matplotlib.pyplot as plt
 import numpy as np
 import stats as st
 
@@ -196,51 +197,76 @@ class MABSED:
 
     # Esto va a ser un evento principal con sus palabras relacionadas. Antes de añadirlo vemos si tiene algo
     def update_graphs(self, event):
-        redundant = False
         main_word = event[2]
         # check whether 'event' is redundant with another event already stored in the event graph or not
         if self.event_graph.has_node(main_word): # Esto pasa cuando la main_word de un evento es igual a la related_word de otro main_word
             for related_word, weight in event[3]:
-                # Yo me cargaba esta linea de abajo y comprobaba el solapamiento directamente
                 if self.event_graph.has_edge(main_word, related_word): # Solo va a tener un edge si este evento redundante tiene como related word la main word del evento al que estamos redundando
                     interval_0 = self.event_graph.node[related_word]['interval'] # Intervalo de la palabra relacionada
                     interval_1 = event[1] # Intervalo de la palabra principal
                     if st.overlap_coefficient(interval_0, interval_1) > self.sigma:
                         self.redundancy_graph.add_node(main_word, description=event)
                         self.redundancy_graph.add_node(related_word, description=self.get_event(related_word))
-                        self.redundancy_graph.add_edge(main_word, related_word)
-                        redundant = True
-                        break
-        if not redundant:
-            self.event_graph.add_node(main_word, interval=event[1], mag=event[0][0], main_term=True)
-            for related_word, weight in event[3]:
-                self.event_graph.add_edge(related_word, main_word, weight=weight) # Como es directed va desde el nodo related_word (lo creamos) al nodo event[2] (la flecha acaba aqui)
-        return not redundant
+                        self.redundancy_graph.add_edge(main_word, related_word) # Da igual, este grafo no es directed
+                        return False
+        
+        # Si no es redundante de la otra forma, comprobamos si tiene 3 palabras en comun con algun otro evento
+        coincidences = {}
+        for related_word, weight in event[3]:
+            if self.event_graph.has_node(related_word):
+                if 'main_term' in self.event_graph.node[related_word]: # Esto lo hago porque si la related word es una main word de otro vento no va a tener sucesores
+                    n_common_words = coincidences.get(related_word)
+                    if n_common_words is None:
+                        n_common_words = 0
+                    coincidences[related_word] = n_common_words + 1
+                else:
+                    successors = self.event_graph.successors(related_word)
+                    for successor in successors:
+                        n_common_words = coincidences.get(successor)
+                        if n_common_words is None:
+                            n_common_words = 0
+                        coincidences[successor] = n_common_words + 1
+        candidates = list(coincidences.items())
+        for related_word, amount in candidates:
+            if amount >= 3: # self.p*0.3
+                interval_0 = self.event_graph.node[related_word]['interval']
+                interval_1 = event[1]
+                if st.overlap_coefficient(interval_0, interval_1) > self.sigma:
+                    self.redundancy_graph.add_node(main_word, description=event)
+                    self.redundancy_graph.add_node(related_word, description=self.get_event(related_word))
+                    self.redundancy_graph.add_edge(main_word, related_word)
+                    return False
 
+        self.event_graph.add_node(main_word, interval=event[1], mag=event[0][0], main_term=True)
+        for related_word, weight in event[3]:
+            self.event_graph.add_edge(related_word, main_word, weight=weight) # Como es directed va desde el nodo related_word (lo creamos) al nodo event[2] (la flecha acaba aqui)
+        return True
+
+    # Devuelve los datos del evento cuya main word se le pase como parametro
     def get_event(self, main_term):
         if self.event_graph.has_node(main_term):
             event_node = self.event_graph.node[main_term]
-            if event_node['main_term']:
+            if event_node['main_term']: # Esto no hace falta comprobarlo porque siempre lo va a ser
                 related_words = []
                 for node in self.event_graph.predecessors(main_term):
                     related_words.append((node, self.event_graph.get_edge_data(node, main_term)['weight']))
                 return event_node['mag'], event_node['interval'], main_term, related_words
 
+    # Devuelve los eventos finales, una vez que hemos hecho merge a los eventos duplicados
     def merge_redundant_events(self, events):
         # compute the connected components in the redundancy graph
-        components = []
+        components = [] # Lista con los diferentes grupos formados del grafo. Cada grupo estara compuesto por nodos
         for c in nx.connected_components(self.redundancy_graph):
             components.append(c)
         final_events = []
 
         # merge redundant events
         for event in events:
-            main_word = event[2]
-            main_term = main_word
+            main_word = main_term = event[2]
             descriptions = []
             for component in components:
                 if main_word in component:
-                    main_term = ', '.join(component)
+                    main_term = ', '.join(component) # En component hay una lista de nodos separados por comas
                     for node in component:
                         descriptions.append(self.redundancy_graph.node[node]['description'])
                     break
@@ -253,6 +279,7 @@ class MABSED:
             final_events.append(final_event)
         return final_events
 
+    # Devuelve las 10 palabras mas relevantes de los eventos que estamos haciendo merge
     def merge_related_words(self, main_term, descriptions):
         all_related_words = []
         for desc in descriptions:
@@ -265,6 +292,14 @@ class MABSED:
                     break
                 merged_related_words.append((word, weight))
         return merged_related_words
+
+    def print_graphs(self):
+        plt.figure('Events graph')
+        nx.draw(self.event_graph, cmap = plt.get_cmap('jet'), with_labels=True)
+        plt.figure('Redundancy graph')
+        nx.draw(self.redundancy_graph, cmap = plt.get_cmap('jet'), with_labels=True)
+
+        plt.show()
 
     def print_event(self, event):
         related_words = []
