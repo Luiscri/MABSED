@@ -29,7 +29,11 @@
         </div>
   
         <div class="container my-5">
-            <material-search active=True search-value="{{query}}"></material-search>
+            <material-search
+                active=True
+                search-value="{{query}}"
+                filters="{{filters}}">        
+            </material-search>
 
             <div class="row my-5">
                 <div class="col-md-12">
@@ -111,7 +115,19 @@
                         param='{{param}}'
                         icon='timeline'
                         options='{"title": "Evolution of events over time"}'
-                        optionsbi='{"height": "350", "legend": {"position": "right", "alignment": "center"}, "hAxis": {"title": "Date"}, "vAxis": {"title": "Impact"}}'
+                        optionsbi='{
+                            "height": "350",
+                            "legend": {
+                                "position": "right",
+                                "alignment": "center"
+                            },
+                            "hAxis": {
+                                "title": "Date"
+                            },
+                            "vAxis": {
+                                "title": "Impact"
+                            }
+                        }'
                         cols='[{"label": "Date", "type": "string"}, {"label": "Event #1", "type": "number"}, {"label": "Event #2", "type": "number"}, {"label": "Event #3", "type": "number"}]'>
                     </google-chart>
                 </div>

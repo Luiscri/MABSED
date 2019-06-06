@@ -11,7 +11,7 @@
                 <div id="trophy-silver" class="trophy" data-toggle="modal" data-target="#myModal2" title="Check event #2">
                     <div class="engraving">
                         <template is="dom-repeat" items="{{getNWords(event2.main_words)}}" as="word">
-                            <p class="fit">
+                            <p>
                                 {{word}}
                             </p>
                         </template>
@@ -25,7 +25,7 @@
                 <div id="trophy-gold" class="trophy" data-toggle="modal" data-target="#myModal1" title="Check event #1">
                     <div class="engraving">
                         <template is="dom-repeat" items="{{getNWords(event1.main_words)}}" as="word">
-                            <p class="fit">
+                            <p>
                                 {{word}}
                             </p>
                         </template>
@@ -39,7 +39,7 @@
                 <div id="trophy-bronze" class="trophy" data-toggle="modal" data-target="#myModal3" title="Check event #3">
                     <div class="engraving">
                         <template is="dom-repeat" items="{{getNWords(event3.main_words)}}" as="word">
-                            <p class="fit">
+                            <p>
                                 {{word}}
                             </p>
                         </template>
@@ -304,13 +304,6 @@
         </div>
     </template>
 
-    <script src="js/fitty.min.js"></script>
-    <script>
-        setTimeout(function(){
-            fitty('.fit', {minSize: 10, maxSize: 15});
-        }, 1000);
-    </script>
-
     <script>
         var filtered = false;
 
@@ -365,9 +358,9 @@
                 var that = this
                 var hits = that.data.hits.hits
                 hits.forEach(function(event) {
-                    if(event._id == "1"){
+                    if(event._source.id == "1"){
                         that.event1 = event._source
-                    }else if(event._id == "2"){
+                    }else if(event._source.id == "2"){
                         that.event2 = event._source
                     }else{
                         that.event3 = event._source

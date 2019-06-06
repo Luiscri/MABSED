@@ -60,14 +60,9 @@
           <div class="col-md-11" style="padding-left: 0px">
             <div hidden$="{{!active}}" class="span">
               <input id="searchbox" placeholder="Search Field" style="width: 1000px" class="flex" value="{{searchValue::input}}">
-              <paper-icon-button icon="av:mic" on-tap="getSpeechInput"></paper-icon-button>
+              <paper-icon-button icon="delete" alt="rubbish" on-tap="removeFilters">></paper-icon-button>
             </div>
           </div>
-          <!--
-          <div class="col-md-1">
-            <paper-icon-button icon="delete" on-tap="clearInputs"></paper-icon-button>
-          </div>
-          -->
         </div>
       </paper-toolbar>
     </paper-material>
@@ -96,6 +91,12 @@
           notify: true
         },
 
+        filters: {
+          type: Array,
+          notify: true,
+          value: function() { return []; }
+        }, 
+
         searchValue: {
           type: String,
           notify: true
@@ -115,7 +116,8 @@
         }
       },
 
-      clearInputs: function() {
+      removeFilters: function(){
+        this.filters = [];
         this.searchValue = "";
         this.previousSearches = [];
       },

@@ -1,0 +1,7 @@
+luigi
+numpy
+sklearn
+matplotlib
+scipy
+nlpcube
+

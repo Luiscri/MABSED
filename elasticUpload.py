@@ -8,8 +8,14 @@ p.add_argument('i', metavar='input', type=str, help='Upload or delete instructio
 p.add_argument('idx', metavar='index', type=str, help='Index of the table to upload/delete') # events o tweets
 args = p.parse_args()
 
-if args.idx != 'events' and args.idx != 'tweets':
-    print('Solo hay dos indices de tablas posibles: "events" o "tweets"')
+if args.i != 'upload' and args.i != 'delete':
+    print('Solo hay dos tipos de instrucciones posibles: "upload" o "delete"')
+    sys.exit()
+if args.idx != 'events' and args.idx != 'tweets' and args.idx != 'update_log':
+    print('Solo hay tres indices de tablas posibles: "events", "tweets" o "update_log"')
+    sys.exit()
+if args.idx == 'update_log' and args.i == 'upload':
+    print('El indice "update_log" solo puede ser borrado, no actualizado')
     sys.exit()
 elif args.idx == 'events':
     datafile = 'detected_events.txt'

@@ -41,19 +41,18 @@ services:
     ports:
       - 9200:9200
 
-  kibana:
-    build:
-      context: kibana/
-      args:
-        ELK_VERSION: $ELK_VERSION
-    volumes:
-      - ./kibana/config/:/usr/share/kibana/config:ro
-    ports:
-      - "5601:5601"
-    networks:
-      - dashboard-network
-    depends_on:
-      - elasticsearch
+
+  #orchestrator:
+  #  image: gsiupm/orchestrator
+  #  build: orchestrator/
+  #  volumes:
+  #    - './orchestrator/tasks.py:/soneti/tasks.py'
+  #  ports:
+  #    - "8082:8082"
+  #  environment:
+  #    GSICRAWLER_ENDPOINT: "http://crawler:5000/api/v1"
+  #    ES_HOST: 'elasticsearch'
+    #tty: true
 
 volumes:
   esdata1:
