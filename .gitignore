@@ -6,6 +6,7 @@ orchestrator/detector/mabsed/corpusFileByFile.py
 orchestrator/detector/data/corpus/
 orchestrator/data/preprocessed/
 orchestrator/data/streaming/
+orchestrator/data/results/detected_spam/
 streamer/credentials.py
 streamer/startStreamingCluster.py
 2test.py

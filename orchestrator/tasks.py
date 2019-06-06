@@ -120,7 +120,7 @@ class Main(SimpleMain):
     final = luigi.parameter.DateMinuteParameter(interval=30, default=datetime.datetime.today())
 
     def requires(self):
-        indices = ['events', 'tweets']
+        indices = ['mabsed-events', 'mabsed-tweets']
         doc_types = ['event', 'tweet']
         for idx in range(0,2):
             yield SearchAndStore(final=self.final, index=indices[idx], doc_type=doc_types[idx], idx=idx)
