@@ -6,6 +6,7 @@ services:
     ports:
      - "8080:8080"
     environment:
+      - ES_ENDPOINT_EXTERNAL=http://localhost:9200
       - http.cors.enabled=true
       - http.cors.allow-origin=http://localhost:9200
       - http.cors.allow-headers=Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With

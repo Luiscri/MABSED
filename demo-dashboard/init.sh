@@ -15,5 +15,5 @@ fi
 
 bower link $APP_NAME --allow-root
 
-#envsubst < /usr/src/app/index.env.html > /usr/src/app/index.html || exit 1;
+envsubst < /usr/src/app/index.env.html > /usr/src/app/index.html || exit 1;
 http-server .
