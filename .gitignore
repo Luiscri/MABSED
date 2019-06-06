@@ -11,6 +11,5 @@ streamer/startStreamingCluster.py
 2test.py
 Debate-Spam.csv
 elasticUpload.py
-Elecciones-Spam.py
+Elecciones-Spam.csv
 .env
-.gitattributes
