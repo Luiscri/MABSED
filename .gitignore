@@ -2,6 +2,9 @@
 trash/
 utils/
 documents/
+demo-dashboard/img/logo.psd
+demo-dashboard/img/logoAzul.psd
+demo-dashboard/bower_components
 orchestrator/detector/mabsed/corpusFileByFile.py
 orchestrator/detector/data/corpus/
 orchestrator/data/preprocessed/

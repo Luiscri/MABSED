@@ -42,7 +42,6 @@ services:
     ports:
       - 9200:9200
 
-
   #orchestrator:
   #  image: gsiupm/orchestrator
   #  build: orchestrator/
@@ -53,7 +52,7 @@ services:
   #  environment:
   #    GSICRAWLER_ENDPOINT: "http://crawler:5000/api/v1"
   #    ES_HOST: 'elasticsearch'
-    #tty: true
+  #  tty: true
 
 volumes:
   esdata1:

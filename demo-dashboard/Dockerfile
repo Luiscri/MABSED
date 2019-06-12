@@ -1,4 +1,4 @@
-from node:7.10.0
+FROM node:7.10.0
 
 # Install gettext to get envsubst
 RUN sed -i '/jessie-updates/d' /etc/apt/sources.list  # Now archived
