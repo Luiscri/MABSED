@@ -1,9 +1,14 @@
 FROM python:3.6
 
-COPY requirements.txt /usr/src/orchestrator/
-RUN pip install -r requirements.txt
+WORKDIR /usr/src/app/
 
-COPY tasks.py /usr/src/orchestrator/
-COPY detector/ /usr/src/orchestrator/detector/
-COPY filter/ /usr/src/orchestrator/filter/
-COPY lemmatizer/ /usr/src/orchestrator/lemmatizer/
+COPY requirements.txt ./
+RUN pip3 install --user -r requirements.txt
+
+COPY my_sched.py ./
+COPY tasks.py ./
+COPY detector/ ./detector/
+COPY filter/ ./filter/
+COPY lemmatizer/ ./lemmatizer/
+
+CMD python my_sched.py

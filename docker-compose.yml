@@ -4,15 +4,15 @@ services:
   dashboard:
     build: demo-dashboard/
     ports:
-     - "8080:8080"
+      - "8080:8080"
     environment:
-      - ES_ENDPOINT_EXTERNAL=http://localhost:9200
+      - ES_ENDPOINT_EXTERNAL=${ES_ENDPOINT_EXTERNAL}
       - http.cors.enabled=true
-      - http.cors.allow-origin=ES_ENDPOINT_EXTERNAL
+      - http.cors.allow-origin=${ES_ENDPOINT_EXTERNAL}
       - http.cors.allow-headers=Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With
       - http.cors.allow-credentials=true
     volumes:
-     - ./demo-dashboard:/usr/src/app
+      - ./demo-dashboard:/usr/src/app
     networks:
       - dashboard-network
 
@@ -42,21 +42,35 @@ services:
     ports:
       - 9200:9200
 
-  #orchestrator:
-  #  image: gsiupm/orchestrator
-  #  build: orchestrator/
-  #  volumes:
-  #    - './orchestrator/tasks.py:/soneti/tasks.py'
-  #  ports:
-  #    - "8082:8082"
-  #  environment:
-  #    GSICRAWLER_ENDPOINT: "http://crawler:5000/api/v1"
-  #    ES_HOST: 'elasticsearch'
-  #  tty: true
+  orchestrator:
+    image: orchestrator-mabsed
+    build: orchestrator/
+    environment:
+      ES_HOST: 'elasticsearch'
+    tty: true
+    volumes:
+      - socialdata1:/usr/src/data/
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - dashboard-network
+
+  streamer:
+    image: streamer-mabsed
+    build: streamer/
+    tty: true
+    volumes:
+      - socialdata1:/usr/src/data/
 
 volumes:
   esdata1:
     driver: local
+
+  socialdata1:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DATA_DIRECTORY_PATH}
+      o: bind
 
 networks:
   dashboard-network:

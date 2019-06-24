@@ -45,7 +45,6 @@
     "polymer":"1.7.0",
     "leaflet": "^1.0.3"
   },
-
   "license": "Apache-2.0",
   "homepage": "https://lab.cluster.gsi.dit.upm.es/sefarad/demo-dashboard"
 }

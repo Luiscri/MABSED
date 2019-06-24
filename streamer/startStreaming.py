@@ -20,8 +20,9 @@ class FileListener(StreamListener):
     # Constructor
     def __init__(self, output_directory):
         self.output_directory = output_directory # Path donde se guardaran los tweets
-        self.filename = None # Nombre del fichero en el que se estan guardando los tweets en este momento
+        self.filename = None # Nombre del fichero en el que se van a guardar los tweets en este momento
         self.received_tweets = []
+        print('STREAMER STARTED - Saving tweets in 30 minutes intervals.')
 
     # Metodo que se ejecuta cada vez que recibimos un tweet
     def on_data(self, data):
@@ -40,7 +41,7 @@ class FileListener(StreamListener):
         else:
             saving_tweet['coordinates'] = 'null'
         date_object = datetime.datetime.strptime(data_json['created_at'], '%a %b %d %H:%M:%S +%f %Y') # Pasamos la fecha de String a Date
-        date_object += datetime.timedelta(hours=2) # La hora que devuelve Twitter esta atrasada 1 hora o 2 (depende)
+        date_object += datetime.timedelta(hours=2) # La hora que devuelve Twitter esta atrasada 1 hora o 2 (depende de la estacion)
         saving_tweet['date'] = date_object.strftime('%Y-%m-%d %H:%M:%S') # Le damos el formato que queramos a la fecha
         t = str.maketrans("\n\t\r", "   ")
         if 'extended_tweet' in data_json:
@@ -58,12 +59,12 @@ class FileListener(StreamListener):
 
         # Si se ha cambiado de franja guardamos los tweets
         if filename != self.filename:
-            self.start_file(filename)
+            self.save_file(filename)
 
         self.received_tweets.append(saving_tweet)         
    
-    # Metodo para crear el directorio donde se guardaran los tweets y decidir el nombre del fichero
-    def start_file(self, filename):
+    # Metodo para guardar los tweets que se han recopilado durante los ultimos 30 minutos
+    def save_file(self, filename):
         # Creamos el directorio en el que se guardan los tweets si no existe ya
         if not os.path.exists(self.output_directory):
             os.makedirs(self.output_directory)
@@ -77,17 +78,21 @@ class FileListener(StreamListener):
             for tweet in self.received_tweets:
                 writer.writerow(tweet)
 
+        print("STREAMER UPDATED - File '%s.csv' saved." % self.filename)
+
         self.filename = filename
         self.received_tweets = []
 
     # Metodo que se ejecuta cuando se produce un error para desconectar el Stream y no ser sancionados
     def on_error(self, status_code):
+        # Suele pasar cuando lanzamos el Streamer mientras se encuentra aun lanzado en otro proceso
         if status_code == 420:
+            print('STREAMER ERROR - Process exited.')
             exit()
             return False
 
 if __name__ == '__main__':
-    output_directory = '../orchestrator/data/streaming'
+    output_directory = '../data/streaming/'
 
     locations = [-3.9787006307, 40.2683111652, -3.3693867643, 40.5708246083] # Madrid y alrededores http://boundingbox.klokantech.com/
     languages = ['es'] # Español

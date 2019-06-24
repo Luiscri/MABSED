@@ -7,13 +7,12 @@ demo-dashboard/img/logoAzul.psd
 demo-dashboard/bower_components
 orchestrator/detector/mabsed/corpusFileByFile.py
 orchestrator/detector/data/corpus/
-orchestrator/data/preprocessed/
-orchestrator/data/streaming/
-orchestrator/data/results/detected_spam/
+data/detected_spam/*
+data/preprocessed/*
+data/results/*
+data/streaming/*
 streamer/credentials.py
 streamer/startStreamingCluster.py
-2test.py
 Debate-Spam.csv
 elasticUpload.py
 Elecciones-Spam.csv
-.env

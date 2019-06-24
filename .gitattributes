@@ -1,1 +1,3 @@
+# Esto hace que GitHub no tenga en cuenta la carpeta demo-dashboard
+# para decidir el lenguaje en el que está desarrollado el proyecto
 demo-dashboard/* linguist-vendored

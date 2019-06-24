@@ -42,7 +42,7 @@ def generate_corpus(input_files, stopwords, corpus_directory, min_absolute_freq,
 # k = Numero de eventos a detectar
 # p = Numero maximo de palabras que describen cada evento (10 por defecto)
 # theta = Umbral de peso por encima del cual una palabra se considera relevante (0.6 por defecto)
-# sigma = Sensibilidad a los eventos duplicados (si es alta aumenta numero de eventos duplicados y la precision)
+# sigma = Sensibilidad a los eventos duplicados (si es alta disminuye el numero de eventos duplicados y la precision)
 def detect_events(script_timer, corpus, corpus_directory, k, p, theta, sigma, output_files):
     print('Detection Parameters:')
     print('   Number of events: %d\n   Number of related words: %d\n   Theta: %f\n   Sigma: %f' % 
@@ -66,23 +66,3 @@ def detect_events(script_timer, corpus, corpus_directory, k, p, theta, sigma, ou
     elapsed = timeit.default_timer() - script_timer
     print('Total script time: %f seconds.' % elapsed)
     # mabsed.print_graphs()
-
-'''
-if __name__ == '__main__':
-    p = argparse.ArgumentParser(description='Perform mention-anomaly-based streaming event detection (MABSED)')
-    p.add_argument('i', metavar='input', type=str, help='Input directory containing CSV files')
-    p.add_argument('--k', metavar='top_k_events', type=int, help='Number of top events to detect', default=3)
-    p.add_argument('--sw', metavar='stopwords', type=str, help='Stop-word list', default='./data/stopwords/stopwords-es.txt')
-    p.add_argument('--sep', metavar='separator', type=str, help='CSV separator', default='\t')
-    p.add_argument('--maf', metavar='min_absolute_frequency', type=int, help='Minimum absolute word frequency, default to 10', default=10)
-    p.add_argument('--mrf', metavar='max_relative_frequency', type=float, help='Maximum relative word frequency, default to 0.4', default=0.4)
-    p.add_argument('--tsl', metavar='time_slice_length', type=int, help='Time-slice length, default to 30 (minutes)', default=30) # Dividimos el corpus en ventanas de 30 minutos
-    p.add_argument('--p', metavar='p', type=int, help='Number of candidate words per event, default to 10', default=10) # Igual cambiar esto para que salgan menos
-    p.add_argument('--t', metavar='theta', type=float, help='Theta, default to 0.6', default=0.6)
-    p.add_argument('--s', metavar='sigma', type=float, help='Sigma, default to 0.6', default=0.6)
-    p.add_argument('--o', metavar='output', type=str, help='Output directory for the files', default=output_abs_path)
-    args = p.parse_args()
-    main(source_directory=args.i, k=args.k, stopwords=args.sw, separator=args.sep,
-         min_absolute_freq=args.maf, max_relative_freq=args.mrf, time_slice_length=args.tsl, 
-         p=args.p, theta=args.t, sigma=args.s, output_directory=args.o)
-'''

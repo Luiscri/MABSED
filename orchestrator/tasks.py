@@ -1,9 +1,6 @@
 import sys
 sys.dont_write_bytecode = True
 
-# soneti
-from soneti import SimpleMain
-
 # orchestration
 import luigi
 from luigi.contrib.esindex import CopyToIndex
@@ -30,7 +27,7 @@ class Streamer(luigi.ExternalTask):
     time_slice = luigi.parameter.DateMinuteParameter(interval=30)
 
     def output(self):
-        fname = 'data/streaming/{}.csv'.format(self.time_slice)
+        fname = '../data/streaming/{}.csv'.format(self.time_slice)
         # print('Requires: {}'.format(fname))
         return luigi.LocalTarget(fname)
 
@@ -47,7 +44,7 @@ class Preprocess(luigi.Task):
             tweets = list(reader)
         filtered_tweets, spam = filter_spam(tweets, 0.5)
 
-        spam_directory = 'data/results/detected_spam/'
+        spam_directory = '../data/detected_spam/'
         if not os.path.exists(spam_directory):
             os.makedirs(spam_directory)
 
@@ -68,7 +65,7 @@ class Preprocess(luigi.Task):
                 writer.writerow(tweet)        
 
     def output(self):
-        return luigi.LocalTarget('data/preprocessed/{}.csv'.format(self.time_slice))        
+        return luigi.LocalTarget('../data/preprocessed/{}.csv'.format(self.time_slice))        
 
 class DetectEvents(luigi.Task):
     final = luigi.parameter.DateMinuteParameter(interval=30, default=datetime.datetime.today())
@@ -87,8 +84,8 @@ class DetectEvents(luigi.Task):
                       corpus_directory='./detector/data/corpus/')
 
     def output(self):
-        events_filename = 'data/results/detected_events{}.txt'.format(self.final.strftime("%Y-%m-%d %H:%M:%S"))
-        tweets_filename = 'data/results/detected_tweets{}.txt'.format(self.final.strftime("%Y-%m-%d %H:%M:%S"))
+        events_filename = '../data/results/detected_events{}.txt'.format(self.final.strftime("%Y-%m-%d %H:%M:%S"))
+        tweets_filename = '../data/results/detected_tweets{}.txt'.format(self.final.strftime("%Y-%m-%d %H:%M:%S"))
         return [luigi.LocalTarget(events_filename), luigi.LocalTarget(tweets_filename)]
 
 class Mediator(luigi.Task):
@@ -115,8 +112,7 @@ class SearchAndStore(CopyToIndex):
     def requires(self):
         return Mediator(final=self.final, idx=self.idx)
 
-class Main(SimpleMain):
-    interval = 1
+class Main(luigi.Task):
     final = luigi.parameter.DateMinuteParameter(interval=30, default=datetime.datetime.today())
 
     def requires(self):
