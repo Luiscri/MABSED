@@ -105,8 +105,8 @@ class SearchAndStore(CopyToIndex):
     doc_type = luigi.parameter.Parameter()
     idx = luigi.parameter.Parameter()
 
-    host = 'localhost'
-    port = '9200'
+    host = 'elasticsearch'
+    #port = '9200'
     purge_existing_index = True
 
     def requires(self):

@@ -53,6 +53,8 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     networks:
       - dashboard-network
+    depends_on:
+      - elasticsearch
 
   streamer:
     image: streamer-mabsed
