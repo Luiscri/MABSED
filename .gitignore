@@ -7,10 +7,6 @@ demo-dashboard/img/logoAzul.psd
 demo-dashboard/bower_components
 orchestrator/detector/mabsed/corpusFileByFile.py
 orchestrator/detector/data/corpus/
-data/detected_spam/*
-data/preprocessed/*
-data/results/*
-data/streaming/*
 streamer/credentials.py
 streamer/startStreamingCluster.py
 Debate-Spam.csv
