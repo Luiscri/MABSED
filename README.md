@@ -4,7 +4,7 @@
 
 ## About
 
-MABSED (Mention-Anomaly Based Streaming Event Detector) is a monitoring system which allows the user to track the top three most impactful events that have been discussed on a social network as Twitter in the last 24 hours. This study has focus on the city of Madrid, but it can be applied to any other city or even country.
+MABSED (Mention-Anomaly Based Streaming Event Detector) is a monitoring system which allows the user to track the top three most impactful events that have been discussed on a social network as Twitter in the last 24 hours. This study has focused on the city of Madrid, but it can be applied to any other city or even country.
 
 Detection module bases his predictions on the total number of users and mentions that each event has involved. Moreover, results are displayed in a visualization module allowing the viewer to identify each event characteristics as well as its temporal and spatial patterns through different widgets.
 
@@ -19,7 +19,7 @@ The system is completely Dockerized and has a multi-container structure with fou
 ## Requirements
 
 Before the project can be executed there are certain requirements and instructions that must be pleased.
-1. Since the project will be deployed using Docker, host system will need to install it in case it doesn't already have it. This process can vary depeding on the Operative System.
+1. Since the project will be deployed using Docker, host system will need to install it in case it doesn't already have it. Moreover docker-compose is also needed, so although this process can vary depeding on the Operative System you can follow [this](https://docs.docker.com/compose/install/) link if you need more information.
 2. User must have access to a Twitter Developer Account in order to collect the Streaming data. Once the application has been registered and all the necessary keys have been obtained they must be uploaded to `Project/streamer/credentials.py` file.
 3. Finally, some services need to share data saved in a host local folder. This will be achieved by a Docker volume which will be mounted later in each Docker container, so before running the project you will need to specify at `Project/.env` file the ABSOLUTE path to the `Project/data/` folder, which will be different for every user.
  
