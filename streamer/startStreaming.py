@@ -51,9 +51,9 @@ class FileListener(StreamListener):
 
         # Comprobamos si se ha cambiado de franja de media hora
         if date_object.minute >= 0 and date_object.minute < 30:
-            filename = date_object.replace(minute=0).strftime('%Y-%m-%d %H:%M:00')
-        else:
             filename = date_object.replace(minute=30).strftime('%Y-%m-%d %H:%M:00')
+        else:
+            filename = (date_object+datetime.timedelta(hours=1)).replace(minute=0).strftime('%Y-%m-%d %H:%M:00')
         if self.filename == None:
             self.filename = filename
 
