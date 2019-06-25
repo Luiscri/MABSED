@@ -8,6 +8,12 @@ MABSED (Mention-Anomaly Based Streaming Event Detector) is a monitoring system w
 
 Detection module bases his predictions on the total number of users and mentions that each event has involved. Moreover, results are displayed in a visualization module allowing the viewer to identify each event characteristics as well as its temporal and spatial patterns through different widgets.
 
+A static version of the project can be found in the following link. The detection results were collected from  5am April 28th 2019 to 5am April 29th 2019, when the Spanish General Elections took place.
+
+```
+http://mabsed.cluster.gsi.dit.upm.es/
+```
+
 ## Author
 
 Luis Cristóbal López García
