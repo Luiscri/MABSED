@@ -1,6 +1,6 @@
 # MABSED
 
-![MABSED logo](./demo-dashboard/img/MABSEDlogoAzul.png)
+<div style="text-align:center"><img src="./demo-dashboard/img/MABSEDlogoAzul.png" alt="MABSED logo"/></div>
 
 ## About
 
@@ -15,6 +15,10 @@ Luis Cristóbal López García
 ## Performance
 
 The system is completely Dockerized and has a multi-container structure with four different services which interacts between them; proyect can be raised with a single command, starting all the process. Detector needs at least a 24-hour dataset in order to achieve a proper detection, so once the process is started it will first enter a collection phase where tweets will be saved in the host file system. Once this phase is over the detection task will be performed every 30 minutes, returning the top three events ocurred in the last 24 hours and saving the results in a persistence layer provided by ElasticSearch. Progress can be tracked at any time by the information displayed on console.
+
+An overall view of MABSED architecture can be seen in the following figure:
+
+<div style="text-align:center"><img src="./demo-dashboard/img/architecture.png" alt="MABSED architecture"/></div>
 
 ## Requirements
 
@@ -39,7 +43,7 @@ Data stored in the persistence layer can be accessed through the following route
 http://localhost:9200/
 ```
 
-There are two different indices where data is stored: `mabsed-events` (for each event information) and `mabsed-tweets` (for the tweets describing to each event). For example, if we wanted to see 100 tweets stored in ES, we would follow this route:
+There are two different indices where data is stored: `mabsed-events` (for each event information) and `mabsed-tweets` (for the tweets describing each event). For example, if we wanted to see 100 of the tweets stored in ES, we would follow this route:
 
 ```
 http://localhost:9200/mabsed-tweets/_search?size=100
@@ -57,4 +61,4 @@ If a deeper understanding of the project is desired the lecture of the document 
 
 For further investigations, please cite this repository as well as the author name in your publications.
 
-The approach employed as base line for the final detection model was developed by Adrien Guille and Cécile Favre. You can learn more about this project in [this](http://mediamining.univ-lyon2.fr/people/guille/publications/snam.pdf) publication, and its lecture is also recommended in case changes want to be applied to the project.
+The approach employed as base line for the final detection model was developed by Adrien Guille and Cécile Favre. You can learn more about the project in [this](http://mediamining.univ-lyon2.fr/people/guille/publications/snam.pdf) publication. Its lecture is also recommended in case changes want to be applied to the detector.
